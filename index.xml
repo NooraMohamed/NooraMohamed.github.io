@@ -66,5 +66,30 @@ font-style: inherit;">1</span></span></code></pre></div></div>
   <guid>https://your-website-url.example.com/posts/welcome/</guid>
   <pubDate>Mon, 30 Mar 2026 05:00:00 GMT</pubDate>
 </item>
+<item>
+  <title>CHANGE THIS TO BE THE TITLE OF YOUR POST</title>
+  <dc:creator>THIS IS YOUR NAME</dc:creator>
+  <link>https://your-website-url.example.com/posts/real-madrids-manager-woes/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>Write text here. This is where you post will go.</p>
+<p>More words in between charts.</p>
+<p>More words.</p>
+<p>Maybe a conclusion, maybe not, depends on how you structure it.</p>
+
+
+
+ ]]></description>
+  <category>laliga</category>
+  <category>realmadrid</category>
+  <category>futbol</category>
+  <guid>https://your-website-url.example.com/posts/real-madrids-manager-woes/</guid>
+  <pubDate>Invalid Date</pubDate>
+  <media:content url="https://your-website-url.example.com/posts/real-madrids-manager-woes/image.png" medium="image" type="image/png"/>
+</item>
 </channel>
 </rss>
