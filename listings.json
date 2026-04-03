@@ -2,9 +2,9 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/real-madrids-manager-woes/index.html",
       "/posts/post-with-code/index.html",
-      "/posts/welcome/index.html",
-      "/posts/real-madrids-manager-woes/index.html"
+      "/posts/welcome/index.html"
     ]
   }
 ]
