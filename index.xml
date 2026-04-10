@@ -661,7 +661,7 @@ font-style: inherit;">element_blank</span>() )</span></code></pre></div></div>
   <category>Carlo Ancelotti</category>
   <guid>https://your-website-url.example.com/posts/real-madrids-manager-woes/</guid>
   <pubDate>Fri, 10 Apr 2026 05:00:00 GMT</pubDate>
-  <media:content url="https://your-website-url.example.com/posts/real-madrids-manager-woes/image.png" medium="image" type="image/png"/>
+  <media:content url="https://your-website-url.example.com/posts/real-madrids-manager-woes/image.png" medium="image" type="image/png" height="97" width="144"/>
 </item>
 </channel>
 </rss>
