@@ -9,10 +9,10 @@
 <link>https://your-website-url.example.com/</link>
 <atom:link href="https://your-website-url.example.com/index.xml" rel="self" type="application/rss+xml"/>
 <description>A blog built with Quarto</description>
-<generator>quarto-1.9.36</generator>
+<generator>quarto-1.9.37</generator>
 <lastBuildDate>Fri, 10 Apr 2026 05:00:00 GMT</lastBuildDate>
 <item>
-  <title>Who was the better offensive coach in Real Madrid</title>
+  <title>HOW DOES CHANGING IN COACHES AFFECT A RANKING OF A TEAM</title>
   <dc:creator>Noora Mohamed</dc:creator>
   <link>https://your-website-url.example.com/posts/real-madrids-manager-woes/</link>
   <description><![CDATA[ 
@@ -25,7 +25,13 @@
 <p>Fans focus on the winning and scoring, the real impact all comes back to the objective, planning and knowledge, that coaches implant in their players.</p>
 <p>The scores of a single game, leads back to what the coach taught and how successfully the players executed that vision, revealing the ability the coach has when it comes to playing offense.</p>
 <p>Álvaro Arbeloa-</p>
-<p><a href="https://www.realmadrid.com/en-US/the-club/history/football-legends/alvaro-arbeloa-coca">Álvaro Arbeloa</a>, a Spanish former defender football player professional footballer and current manager. Arbeloa has won many trophies; Club World Cup, a UEFA Super Cup, a LaLiga Title, two Copas del Rey and a Spanish Super Cup. Shifting from a player into a coach, Arebola alongside his passion and management that highlighting his career.</p>
+<p><a href="https://www.realmadrid.com/en-US/the-club/history/football-legends/alvaro-arbeloa-coca">Álvaro Arbeloa</a>, a Spanish former defender football player professional footballer and current manager. Arbeloa has won many trophies; Club World Cup, a UEFA Super Cup, a LaLiga Title, two Copas del Rey and a Spanish Super Cup. Shifting from a player into a coach, alongside his passion and management that highlighting his career.</p>
+<p>Xabi Alonso-</p>
+<p><a href="https://www.realmadrid.com/en-US/the-club/history/football-legends/xabier-alonso-olano">Xabi Alonso</a> a former Midfielder football player and a former coach in Real Madrid. Alonso has apperated in about 236 competitive games, wining over 9 trophis during his time as a player, his trophies included 1 LaLiga title and 2 European Championships with Spain. Alonso is considered as one of the best midfilers of his generations.</p>
+<section id="carlo-ancelotti-" class="level3">
+<h3 class="anchored" data-anchor-id="carlo-ancelotti-"><strong>Carlo Ancelotti-</strong></h3>
+<p><a href="https://www.realmadrid.com/en-US/news/football/first-team/latest-news/ancelotti-18-12-2024">Carlo Ancellotti</a>, the former coach of Real Madrid and the most decorated coach in the history of Real Madrid, wining over 15 trophies. Ancellotti has started his career in July 2009, coaching AC Milan for eight years.</p>
+<p><strong>How much does a change of coach play in team ranking?</strong></p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -230,6 +236,8 @@ font-style: inherit;">"bold"</span>)) </span></code></pre></div></div>
 </div>
 </div>
 </div>
+<p>For my hypothesis, I used ESPN to gather my data about how much ranking has changed focusing on the players, their position and points. From studying the graph, I came to an understanding that the ranking reflect’s on the skills that the coach has. For instance, Dean Huijsen is a Defender for Real Madrid during the La Liga season he was ranked as number one and Alvaro Arbeloa</p>
+<p>The changing of a coach, means the ranking of a team player changes, for instance, Nacho a Real Madrid defender player was ranked number one during the 2023-2024 season, Luka Modric a midfiler taken over in the 2024-2025 season with 7 points, and Dean Huijsen being ranked number one during the 2025-2026.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -332,7 +340,7 @@ font-style: inherit;">y=</span>GA), <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">color=</span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"hotpink"</span>) <span class="sc" style="color: #5E5E5E;
+font-style: inherit;">"darkgrey"</span>) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span></span>
 <span id="cb12-4">  <span class="fu" style="color: #4758AB;
@@ -358,12 +366,12 @@ font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"How has the scoring changed over time"</span>,</span>
+font-style: inherit;">"THE GOALS SCORED FOR THE LALIGA SEASON FOR REAL MADRID VS THE GOALS SCORED AGAINST FROM 23-26 "</span>,</span>
 <span id="cb12-6">       <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">subtitle =</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"LALIGASEASON"</span>,</span>
+font-style: inherit;">"REAL MADRID OFFESNVIE AND DEFESNEIVE TELLS A DIFFERENT STORY ACROSS THE THREE SEASON OF 2023-2024,2024-2025 AND 2025-2026 "</span>,</span>
 <span id="cb12-7">       <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
@@ -378,7 +386,7 @@ font-style: inherit;">"GAMES AGAINST"</span>,</span>
 background-color: null;
 font-style: inherit;">caption =</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"Source: ESPN"</span>)</span></code></pre></div></div>
+font-style: inherit;">"Source: ESPN|By: Noora Mohamed"</span>)</span></code></pre></div></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -648,6 +656,7 @@ returning NA</code></pre>
 </div>
 
 
+</section>
 
  ]]></description>
   <category>Alvaro Arbeloa</category>
