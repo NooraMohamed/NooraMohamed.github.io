@@ -233,63 +233,66 @@ font-style: inherit;">"bold"</span>)) </span></code></pre></div></div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">madridR <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">madrid25 <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">read_csv</span>(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"LALIGA25-26.csv"</span>) </span></code></pre></div></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 23 Columns: 6
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr (1): Name
-dbl (5): RK, P, yc, rc, Pts
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1">madrida<span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">read_csv</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"LALIGA24-25.csv"</span>) </span></code></pre></div></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 25 Columns: 6
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr (1): Name
-dbl (5): RK, P, yc, rc, Pts
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1">madridi<span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">read_csv</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"LALIGA23-24.csv"</span>) </span></code></pre></div></div>
+font-style: inherit;">"25RFBF.csv"</span>) </span></code></pre></div></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>New names:
-Rows: 25 Columns: 7
+Rows: 20 Columns: 16
 ── Column specification
 ──────────────────────────────────────────────────────── Delimiter: "," chr
-(1): Name dbl (5): RK, P, yc, rc, Pts lgl (1): ...1
+(4): Squad, Last 5, Top Team Scorer, Goalkeeper dbl (10): Rk, MP, W, D, L, GF,
+GA, GD, Pts, Pts/MP num (1): Attendance lgl (1): ...1
 ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
 Specify the column types or set `show_col_types = FALSE` to quiet this message.
 • `` -&gt; `...1`</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1">madrid24<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_csv</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"24FBREF.csv"</span>) </span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>New names:
+Rows: 20 Columns: 15
+── Column specification
+──────────────────────────────────────────────────────── Delimiter: "," chr
+(3): Squad, Top Team Scorer, Goalkeeper dbl (10): Rk, MP, W, D, L, GF, GA, GD,
+Pts, Pts/MP num (1): Attendance lgl (1): ...1
+ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
+Specify the column types or set `show_col_types = FALSE` to quiet this message.
+• `` -&gt; `...1`</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1">madrid23<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_csv</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"23-24fb.csv"</span>) </span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 20 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (3): Squad, Top Team Scorer, Goalkeeper
+dbl (10): Rk, MP, W, D, L, GF, GA, GD, Pts, Pts/MP
+num  (1): Attendance
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -302,13 +305,13 @@ font-style: inherit;">+</span> </span>
 background-color: null;
 font-style: inherit;">geom_line</span>(<span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">data=</span>madridR, <span class="fu" style="color: #4758AB;
+font-style: inherit;">data=</span>madrid25, <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">x=</span>rc, <span class="at" style="color: #657422;
+font-style: inherit;">x=</span>GF, <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">y=</span>yc), <span class="at" style="color: #657422;
+font-style: inherit;">y=</span>GA), <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">color=</span><span class="st" style="color: #20794D;
 background-color: null;
@@ -319,34 +322,34 @@ font-style: inherit;">+</span> </span>
 background-color: null;
 font-style: inherit;">geom_line</span>(<span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">data=</span>madrida, <span class="fu" style="color: #4758AB;
+font-style: inherit;">data=</span>madrid24, <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">x=</span>rc, <span class="at" style="color: #657422;
+font-style: inherit;">x=</span>GF, <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">y=</span>yc), <span class="at" style="color: #657422;
+font-style: inherit;">y=</span>GA), <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">color=</span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"gold"</span>) <span class="sc" style="color: #5E5E5E;
+font-style: inherit;">"hotpink"</span>) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span></span>
 <span id="cb12-4">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">geom_line</span>(<span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">data=</span>madridi, <span class="fu" style="color: #4758AB;
+font-style: inherit;">data=</span>madrid23, <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">x=</span>rc, <span class="at" style="color: #657422;
+font-style: inherit;">x=</span>GF, <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">y=</span>yc), <span class="at" style="color: #657422;
+font-style: inherit;">y=</span>GA), <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">color=</span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"black"</span>) <span class="sc" style="color: #5E5E5E;
+font-style: inherit;">"blue"</span>) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span> </span>
 <span id="cb12-5">  <span class="fu" style="color: #4758AB;
@@ -365,12 +368,12 @@ font-style: inherit;">"LALIGASEASON"</span>,</span>
 background-color: null;
 font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"RED CARD"</span>,</span>
+font-style: inherit;">"GOALS FOR"</span>,</span>
 <span id="cb12-8">       <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"YELLOW CARD"</span>,</span>
+font-style: inherit;">"GAMES AGAINST"</span>,</span>
 <span id="cb12-9">       <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">caption =</span> <span class="st" style="color: #20794D;
