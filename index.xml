@@ -157,12 +157,12 @@ font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"Athelete performance during the LaLiga season 23-26"</span>,</span>
-<span id="cb1-12">       <span class="at" style="color: #657422;
+font-style: inherit;">"Athelete performance during the LaLiga season 23-26."</span>,</span>
+<span id="cb1-12"><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">subtitle =</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"Bar Charts,higlighting the difference player ranking acroos all three three seasons"</span>,</span>
+font-style: inherit;">"Bar Charts,higlighting the difference player ranking across all the three seasons."</span>,</span>
 <span id="cb1-13">       <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
@@ -196,7 +196,7 @@ font-style: inherit;">element_text</span>(<span class="at" style="color: #657422
 background-color: null;
 font-style: inherit;">size =</span> <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">15</span>, <span class="at" style="color: #657422;
+font-style: inherit;">14</span>, <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">face =</span> <span class="st" style="color: #20794D;
 background-color: null;
@@ -388,23 +388,29 @@ font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"Real Madrid Goals scored vs. Goals scored again in LaLiga (2023-2026) "</span>,</span>
-<span id="cb2-15">       <span class="at" style="color: #657422;
+font-style: inherit;">"Real Madrid Goals scored vs. Goals scored against in LaLiga (2023-2026) "</span>,<span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">subtitle =</span> <span class="st" style="color: #20794D;
+font-style: inherit;">subtitle =</span> </span>
+<span id="cb2-15"><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"A graph that shows how well Readl Madrid did during the season with offensive and defensive play"</span>,</span>
-<span id="cb2-16">       <span class="at" style="color: #657422;
+font-style: inherit;">"How well Real Madrid did during the season with offensive and defensive play</span></span>
+<span id="cb2-16"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">across all three season.</span></span>
+<span id="cb2-17"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>,</span>
+<span id="cb2-18">       <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"GOALS FOR"</span>,</span>
-<span id="cb2-17">       <span class="at" style="color: #657422;
+<span id="cb2-19">       <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"GAMES AGAINST"</span>,</span>
-<span id="cb2-18">       <span class="at" style="color: #657422;
+<span id="cb2-20">       <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">caption =</span> <span class="st" style="color: #20794D;
 background-color: null;
@@ -591,13 +597,16 @@ font-style: inherit;">plot_annotation</span>( <span class="at" style="color: #65
 background-color: null;
 font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"Real Madrid LALIGA ranking"</span>, </span>
-<span id="cb3-16">  <span class="at" style="color: #657422;
+font-style: inherit;">"Real Madrid LALIGA ranking"</span>, <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">subtitle =</span> <span class="st" style="color: #20794D;
+font-style: inherit;">subtitle =</span> </span>
+<span id="cb3-16">  <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"During the LALIGA 2023 season Real Madrid was ranked number one by 95 points. Following the 2026 season, Real Madrid is now ranked second, with Barcelona taking the lead by 76 points."</span>,</span>
-<span id="cb3-17">  <span class="at" style="color: #657422;
+font-style: inherit;">"During the LALIGA 2023 season Real Madrid was ranked number one by 95 points. </span></span>
+<span id="cb3-17"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  Following the 2026 season, Real Madrid is now ranked second, with Barcelona taking the lead by 76 points."</span>,</span>
+<span id="cb3-18">  <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">caption =</span> <span class="st" style="color: #20794D;
 background-color: null;
@@ -606,7 +615,7 @@ background-color: null;
 font-style: inherit;">&amp;</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">theme</span> ( </span>
-<span id="cb3-18">  <span class="at" style="color: #657422;
+<span id="cb3-19">  <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">plot.title =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -619,7 +628,7 @@ background-color: null;
 font-style: inherit;">face =</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"bold"</span>), </span>
-<span id="cb3-19">  <span class="at" style="color: #657422;
+<span id="cb3-20">  <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">axis.title =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
