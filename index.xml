@@ -1271,5 +1271,604 @@ font-style: inherit;">5</span>)</span>
   <pubDate>Thu, 02 Apr 2026 05:00:00 GMT</pubDate>
   <media:content url="https://your-website-url.example.com/posts/real-madrid-post/image.png" medium="image" type="image/png"/>
 </item>
+<item>
+  <title>Why is Real Madrid ranked number one club in European football</title>
+  <dc:creator>Noora Mohamed</dc:creator>
+  <link>https://your-website-url.example.com/posts/real-madrid-post/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>Real Madrid is not only a football club, it’s a home to the most <a href="https://www.bbc.com/storyworks/future/innovation-in-motion/innovative-football-club">successful club in history</a>. Real Madrid is a symbol of greatness, handwork and success. With a stadium full of passion and a trophy room that speaks for itself, Real Madrid has proven that with time comes great success.</p>
+<p>No club can prove their greatness like the UEFA Champion League does, it is a season where history is made and where matches become a historic moment, no club has made as much history with the League as Real Madrid did.</p>
+<p>Real Madrid has a recorded of 15 Champions League titles, more than any club in history. Real Madrid does not only compete in the Champions League, but with every season they own it.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.0     ✔ readr     2.1.6
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.2     ✔ tibble    3.3.1
+✔ lubridate 1.9.4     ✔ tidyr     1.3.2
+✔ purrr     1.2.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(patchwork) </span>
+<span id="cb3-2">madrid <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_csv</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"madridchampion.csv"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">show_col_types =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>)</span>
+<span id="cb3-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(madrid,<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">reorder</span>(Club, Titles), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y=</span>Titles, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"red"</span>))<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb3-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_col</span>()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb3-5">             <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coord_flip</span>()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb3-6">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"The club with the most titles,"</span>, </span>
+<span id="cb3-7">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">subtitle =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"ranking from highest to lowest"</span>,</span>
+<span id="cb3-8">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Clubs "</span>,</span>
+<span id="cb3-9">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Titles"</span>,</span>
+<span id="cb3-10">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">caption =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Source: STATMUSE|By Noora Mohamed"</span>)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb3-11">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_minimal</span>()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb3-12"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme</span>(</span>
+<span id="cb3-13">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">plot.title =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_text</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">15</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">face =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"bold"</span>),</span>
+<span id="cb3-14">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">plot.subtitle =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_text</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">face =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"plain"</span>),</span>
+<span id="cb3-15">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">plot.margin =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">margin</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">15</span>)</span>
+<span id="cb3-16">  )</span></code></pre></div></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://your-website-url.example.com/posts/real-madrid-post/index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Data does not lie, when comparing every club that has ever won in the Champion League, the only club that stands at top is Real Madrid. Real Madrid holds more trophies than all the other clubs; AC Milan, Liverpool,who hold between 5-6 trophies from the season. Bayern Munich and Barcelona are behind by, an estimate of 10, meaning that the difference between the two clubs and Real Madrid is also clear as the sun. On the other hand, no club has competed consistently in European football as much as Real Madrid. The trophies isn’t a number but, a story of dedication.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span>
+<span id="cb4-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(patchwork) </span>
+<span id="cb4-3">madrid12<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_csv</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"RMPOSSESSION.csv"</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">show_col_types =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>New names:
+• `` -&gt; `...20`</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb7-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data=</span>madrid12, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x=</span>SEASON, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y=</span>W), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"red"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb7-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_text</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4.5</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">label=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Lowest points scored"</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"blue"</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb7-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_text</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">13.5</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">label=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Highest points scored"</span>),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"red"</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb7-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"How many season has Real Madrid played in the Championship league, with how many points they won. "</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">subtitle =</span> </span>
+<span id="cb7-6"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"The Seasons Real Madrid played, including how many points they have won"</span>,</span>
+<span id="cb7-7">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Seasons"</span>,</span>
+<span id="cb7-8">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Points scored during match"</span>,</span>
+<span id="cb7-9">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">caption =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Source: STATMUSE|By: Noora Mohamed"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb7-10">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_minimal</span>()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb7-11"> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme</span>(</span>
+<span id="cb7-12">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">plot.title =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_text</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">face =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"bold"</span>),</span>
+<span id="cb7-13">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">plot.subtitle =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_text</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">face =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"plain"</span>),</span>
+<span id="cb7-14">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">plot.margin =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">margin</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>)</span>
+<span id="cb7-15">  )</span></code></pre></div></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://your-website-url.example.com/posts/real-madrid-post/index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Wining the UEFA isn’t only about dedication, but also about how well the team plays with tensions. The chart above tells a story about all the season that Real Madrid has player from 2015- 2026, giving a visualization about the team performance across all seasons. Real Madrid’s lowest points was during 2018-2019, 2019-2020 seasons, where they had just scored about eight points during a game.However during the 2024-2025, 2025-2026 season Real Madrid, has went up surprisingly quickly with fourteen points. After the COVID-19, Real Madrid seems to have become better, scoring better than did even before covid.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span>
+<span id="cb8-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(patchwork) </span>
+<span id="cb8-3">madrid12<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_csv</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"RMPOSSESSION.csv"</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>New names:
+• `` -&gt; `...20`</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 11 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (2): POSS, SEASON
+dbl (14): CLUB, POSS%, M, W, D, L, G, GC, xG, xGA, SH, YC, RC, ...20
+num  (4): SOT, PASSATT, PASS, FOUL
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1">bar1 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb12-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_col</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data=</span>madrid12, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">reorder</span>(xG,GC),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y=</span>SEASON,),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"red"</span>,</span>
+<span id="cb12-3">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>,</span>
+<span id="cb12-4"> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">position =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">position_nudge</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>))<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb12-5">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_text</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">label=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Expected Goals"</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"white"</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb12-6">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_text</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">label=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Goals Conceded"</span>),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"red"</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb12-7">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coord_flip</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb12-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>( <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Shots"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Season"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb12-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_minimal</span>() </span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_col(data = madrid12, aes(x = reorder(xG, GC), y = SEASON, :
+Ignoring unknown parameters: `size`</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1">bar1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb14-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot_annotation</span>( <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Number of Shots vs. Number of total target in one game"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">subtitle =</span> </span>
+<span id="cb14-3">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Real Madrid has shot an average of 93 shots in one game, with a 23.01 shots target, during one season."</span>,</span>
+<span id="cb14-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">caption =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Source: STATMUSE | By Noora Mohamed"</span> ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb14-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_minimal</span>()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb14-6">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme</span>(</span>
+<span id="cb14-7">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">plot.title =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_text</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">15</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">face =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"bold"</span>),</span>
+<span id="cb14-8">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">plot.subtitle =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_text</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">face =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"plain"</span>),</span>
+<span id="cb14-9">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">plot.margin =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">margin</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>)</span>
+<span id="cb14-10">  )</span></code></pre></div></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://your-website-url.example.com/posts/real-madrid-post/index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This chart compares the expected goals that Real Madrid was expected to enter vs, the goals they have actually scored during the match, during the season of UEFA, the 2021-2022 season stands out the most, showing that Real Madrid had their highest number of expected goals that season. During the 2019-2020 season though, they have scored fewer goals that expected with an average of six points, this shows how much of a strong defense they had during the season.</p>
+
+
+
+ ]]></description>
+  <category>champion league</category>
+  <category>winningpercentage</category>
+  <category>possession</category>
+  <guid>https://your-website-url.example.com/posts/real-madrid-post/</guid>
+  <pubDate>Thu, 02 Apr 2026 05:00:00 GMT</pubDate>
+  <media:content url="https://your-website-url.example.com/posts/real-madrid-post/image.png" medium="image" type="image/png"/>
+</item>
 </channel>
 </rss>
