@@ -1,12 +1,28 @@
 /* css styles */
 
+/* ---------- Baby pink theme (site-wide) ---------- */
+:root {
+  --bs-primary: #e0679a;
+  --bs-link-color: #c93a74;
+  --bs-link-hover-color: #a02a5a;
+}
+body { background-color: #fff7fa; }
+.navbar { background-color: #ffd6e3 !important; border-bottom: 1px solid #f7b6cd; }
+.navbar .navbar-brand, .navbar .nav-link, .navbar .bi { color: #8a2c52 !important; }
+.navbar .nav-link:hover, .navbar .nav-link.active { color: #c93a74 !important; }
+a { color: #c93a74; }
+a:hover { color: #a02a5a; }
+.listing-category, .category { background-color: #ffe3ec; color: #a02a5a; }
+.listing-category:hover, .category:hover { background-color: #ffd0e0; }
+hr { border-color: #f7b6cd; }
+
 /* ---------- About page ---------- */
 .about-page {
-  --ap-accent: #2780e3;
-  --ap-accent-soft: rgba(39, 128, 227, 0.10);
+  --ap-accent: #c93a74;
+  --ap-accent-soft: rgba(244, 143, 177, 0.20);
   --ap-ink: #212529;
   --ap-muted: #6c757d;
-  --ap-line: #e3e7ec;
+  --ap-line: #f7d4e1;
   max-width: 880px;
   margin: 0 auto;
   padding: 5.5rem 1.25rem 4rem;
@@ -80,8 +96,8 @@
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
 }
-.about-btn.primary { background: var(--ap-accent); color: #fff; }
-.about-btn.primary:hover { background: #1c63b4; border-color: #1c63b4; color: #fff; }
+.about-btn.primary { background: var(--ap-accent); color: #fff !important; }
+.about-btn.primary:hover { background: #a02a5a; border-color: #a02a5a; color: #fff !important; }
 .about-btn.ghost { color: var(--ap-accent); }
 .about-btn.ghost:hover { background: var(--ap-accent-soft); }
 
