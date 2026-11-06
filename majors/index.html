@@ -142,7 +142,7 @@ th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute
   <div class="search">
     <label for="q">Search for a major</label>
     <div class="field">
-      <input id="q" type="text" autocomplete="off" spellcheck="false" placeholder="Try “journalism,” “nursing” or “computer science”"
+      <input id="q" type="text" autocomplete="off" spellcheck="false" placeholder="Try “journalism,” “finance” or “computer science”"
              role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="list">
       <button type="button" id="clear" aria-label="Clear search">Clear</button>
     </div>
@@ -360,7 +360,7 @@ function byName(n){for(var i=0;i<DATA.length;i++) if(DATA[i].n===n) return DATA[
 
 /* quick picks */
 (function(){
-  var picks=["JOURNALISM","ADVERTISING & PUBLIC RELATIONS","COMPUTER SCIENCE","NURSING","ENGLISH","PSYCHOLOGY"];
+  var picks=["JOURNALISM","ADVERTISING & PUBLIC RELATIONS","COMPUTER SCIENCE","FINANCE","ENGLISH","PSYCHOLOGY"];
   var html='Popular: ';
   picks.forEach(function(n){var d=byName(n);if(d) html+='<button type="button" data-k="'+esc(n)+'">'+esc(d.label)+'</button>'});
   $("quick").innerHTML=html;
