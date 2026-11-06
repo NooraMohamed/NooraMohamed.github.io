@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find a Major | Daily Nebraskan</title>
+<meta name="description" content="Search any University of Nebraska–Lincoln major and see how many students have enrolled in it each fall since 2016.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Libre+Franklin:wght@400;600;700&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#d00000;       /* Husker scarlet used for DN accents */
+  --red-dark:#a30000;
+  --ink:#111;
+  --muted:#5b5b5b;
+  --rule:#d9d9d9;
+  --paper:#fff;
+  --wash:#f6f5f2;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --head:"Playfair Display",Georgia,serif;
+  --sans:"Libre Franklin","Helvetica Neue",Arial,sans-serif;
+  --black:"UnifrakturCook","Old English Text MT",Georgia,serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.5}
+.app{max-width:860px;margin:0 auto;padding:0 16px 24px}
+
+/* masthead */
+.mast{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 8px;border-bottom:4px solid var(--ink);position:relative}
+.mast::after{content:"";position:absolute;left:0;right:0;bottom:-8px;border-bottom:1px solid var(--ink)}
+.nameplate{font-family:var(--black);font-size:clamp(26px,6vw,38px);line-height:1;color:var(--ink);text-decoration:none;letter-spacing:.2px}
+.tag{font:700 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:#fff;background:var(--red);padding:6px 8px;white-space:nowrap}
+
+.hed{margin:26px 0 6px}
+.kicker{font:700 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin:0 0 8px}
+h1{font-family:var(--head);font-weight:900;font-size:clamp(30px,6.5vw,46px);line-height:1.05;margin:0 0 10px;letter-spacing:-.01em}
+.dek{font-size:18px;color:#333;margin:0 0 18px;max-width:62ch}
+
+/* search */
+.search{position:relative;margin:0 0 6px}
+.search label{display:block;font:700 12px/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.field{display:flex;border:2px solid var(--ink);background:#fff}
+.field:focus-within{outline:3px solid var(--red);outline-offset:1px}
+.field input{flex:1;min-width:0;border:0;padding:13px 14px;font:400 18px var(--sans);background:transparent;color:var(--ink);outline:0}
+.field button{border:0;background:var(--ink);color:#fff;font:700 13px var(--sans);letter-spacing:.08em;text-transform:uppercase;padding:0 18px;cursor:pointer}
+.field button:hover{background:var(--red)}
+.list{position:absolute;z-index:10;left:0;right:0;top:100%;margin:2px 0 0;padding:0;list-style:none;background:#fff;border:2px solid var(--ink);border-top:0;max-height:320px;overflow:auto;box-shadow:0 8px 20px rgba(0,0,0,.15)}
+.list[hidden]{display:none}
+.list li{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;font:400 16px var(--sans);border-bottom:1px solid var(--rule);cursor:pointer}
+.list li:last-child{border-bottom:0}
+.list li small{color:var(--muted);white-space:nowrap}
+.list li[aria-selected=true],.list li:hover{background:var(--ink);color:#fff}
+.list li[aria-selected=true] small,.list li:hover small{color:#ddd}
+.list mark{background:none;color:inherit;font-weight:700;text-decoration:underline;text-decoration-color:var(--red);text-decoration-thickness:2px}
+.empty{padding:12px 14px;font:400 15px var(--sans);color:var(--muted)}
+
+.quick{font:400 14px var(--sans);color:var(--muted);margin:12px 0 0}
+.quick button{font:600 14px var(--sans);background:none;border:0;border-bottom:1px solid var(--red);color:var(--ink);padding:0;margin:0 10px 0 0;cursor:pointer}
+.quick button:hover{color:var(--red)}
+
+/* result */
+.result{margin-top:28px;border-top:1px solid var(--ink);padding-top:18px}
+.result h2{font-family:var(--head);font-weight:900;font-size:clamp(24px,5vw,34px);line-height:1.1;margin:0 0 4px}
+.colleges{font:400 14px var(--sans);color:var(--muted);margin:0 0 16px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:0 0 18px}
+.stat{padding:12px 12px 12px 0}
+.stat+.stat{padding-left:14px;border-left:1px solid var(--rule)}
+.stat dt{font:700 11px/1.2 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+.stat dd{margin:0;font:900 clamp(24px,5.5vw,34px)/1.05 var(--head)}
+.stat dd small{display:block;font:400 13px var(--sans);color:var(--muted);margin-top:3px}
+.up{color:#0a6b2f}.down{color:var(--red)}
+
+.charthead{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.charttitle{font:700 14px var(--sans);margin:0}
+.charttitle span{font-weight:400;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--ink)}
+.seg button{font:600 12px var(--sans);padding:6px 11px;border:0;background:#fff;color:var(--ink);cursor:pointer}
+.seg button+button{border-left:1px solid var(--ink)}
+.seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+.chartwrap{position:relative}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.axis text{font:400 12px var(--sans);fill:var(--muted)}
+.grid line{stroke:var(--rule);stroke-width:1}
+.grid line.base{stroke:var(--ink)}
+.line{fill:none;stroke:var(--red);stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.area{fill:var(--red);opacity:.08}
+.dot{fill:#fff;stroke:var(--red);stroke-width:2.5}
+.dot.end{fill:var(--red)}
+.vlab{font:700 13px var(--sans);fill:var(--ink);paint-order:stroke;stroke:#fff;stroke-width:4px}
+.hover line{stroke:var(--ink);stroke-width:1;stroke-dasharray:3 3}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:#fff;font:400 13px/1.35 var(--sans);padding:7px 10px;transform:translate(-50%,-100%);white-space:nowrap;display:none}
+.tip b{font-weight:700;font-size:15px}
+.take{font-size:17px;margin:14px 0 0}
+.take strong{font-family:var(--head)}
+
+details{margin-top:16px;font:400 14px var(--sans)}
+summary{cursor:pointer;font-weight:600}
+table{border-collapse:collapse;width:100%;margin-top:8px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--rule);text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.browse{margin-top:30px;border-top:4px solid var(--ink);padding-top:14px}
+.browse h3{font:700 12px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin:0 0 10px}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.col h4{font-family:var(--head);font-size:18px;margin:0 0 6px;line-height:1.15}
+.col ol{list-style:none;margin:0;padding:0}
+.col li{border-top:1px solid var(--rule)}
+.col li button{display:flex;width:100%;justify-content:space-between;gap:8px;text-align:left;background:none;border:0;padding:8px 0;font:400 14px/1.25 var(--sans);color:var(--ink);cursor:pointer}
+.col li button:hover span:first-child{color:var(--red);text-decoration:underline}
+.col li button span:last-child{font-weight:700;white-space:nowrap}
+
+.foot{margin-top:26px;border-top:1px solid var(--rule);padding-top:12px;font:400 12.5px/1.5 var(--sans);color:var(--muted)}
+.foot b{color:var(--ink)}
+.embed{margin-top:14px;background:var(--wash);padding:10px 12px;font:400 12px var(--sans)}
+.embed code{display:block;margin-top:6px;white-space:pre-wrap;word-break:break-all;font:12px ui-monospace,Menlo,monospace;color:#222}
+
+@media (max-width:640px){
+  body{font-size:16px}
+  .cols{grid-template-columns:1fr;gap:18px}
+  .stat dd{font-size:24px}
+  .stat{padding-right:6px}.stat+.stat{padding-left:10px}
+  .tag{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="mast">
+    <a class="nameplate" href="https://www.dailynebraskan.com" target="_blank" rel="noopener">The Daily Nebraskan</a>
+    <span class="tag">Data</span>
+  </header>
+
+  <section class="hed">
+    <p class="kicker">By the numbers</p>
+    <h1>What’s your major doing?</h1>
+    <p class="dek">Search any University of Nebraska–Lincoln major to see how many students have chosen it each fall since 2016.</p>
+  </section>
+
+  <div class="search">
+    <label for="q">Search for a major</label>
+    <div class="field">
+      <input id="q" type="text" autocomplete="off" spellcheck="false" placeholder="Try “journalism,” “nursing” or “computer science”"
+             role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="list">
+      <button type="button" id="clear" aria-label="Clear search">Clear</button>
+    </div>
+    <ul class="list" id="list" role="listbox" hidden></ul>
+  </div>
+  <p class="quick" id="quick"></p>
+
+  <section class="result" id="result" aria-live="polite"></section>
+
+  <section class="browse" id="browse" aria-label="Browse majors"></section>
+
+  <footer class="foot">
+    <p><b>About the data:</b> Fall-term headcounts of students by <em>primary</em> major, University of Nebraska–Lincoln (data request DR12573, Fall 2016–Fall 2025). Counts for a major are summed across every college and degree level that offers it; Raikes-program listings are folded into the matching major. Students’ second majors are not included, and programs that were created or retired show only the years they existed.</p>
+    <div class="embed" id="embed" hidden>
+      <b>Embed in the CMS:</b> paste this iframe. It resizes itself to fit, and you can preselect a major with <code style="display:inline;font-size:12px">?major=Journalism</code>.
+      <code id="embedcode"></code>
+    </div>
+  </footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+"use strict";
+var YEARS=window.MAJORS_YEARS, DATA=window.MAJORS_DATA, LAST=YEARS.length-1;
+var $=function(id){return document.getElementById(id)};
+var q=$("q"), list=$("list"), result=$("result");
+var fmt=new Intl.NumberFormat("en-US");
+
+/* ---------- helpers ---------- */
+var ACR={"UNL":1,"CYAF":1,"IEP":1,"UNO":1,"UNK":1,"MS":1,"PBAC":1,"CFA":1,"MPAC":1,"IT":1,"II":1,"III":1,"IV":1,"K-12":1,"PK-3":1,"7-12":1,"5-9":1,"4-8":1};
+var SMALL={"and":1,"of":1,"in":1,"for":1,"the":1,"to":1,"&":1,"or":1};
+function title(s){
+  return s.toLowerCase().replace(/(^|[\s\/\-(,])([a-z0-9&][a-z0-9'.&-]*)/g,function(m,pre,w,off){
+    var up=w.toUpperCase();
+    if(ACR[up]) return pre+up;
+    if(off>0 && SMALL[w]) return pre+w;
+    return pre+w.charAt(0).toUpperCase()+w.slice(1);
+  });
+}
+function esc(s){return s.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function shortCollege(c){return c.replace(/^Grad Studies - /,"").replace("Agri Sci & Natl Res","Agricultural Sciences & Natural Resources").replace("Education & Human Sci","Education & Human Sciences").replace("Journalism & Mass Comm","Journalism & Mass Communications").replace("Fine & Performing Arts","Fine & Performing Arts").replace("UNO - Public Affairs & Comm Service","Public Affairs & Community Service (UNO)").replace("Business Administration","Business")}
+
+DATA.forEach(function(d){
+  d.label=title(d.n);
+  d.grad=d.t.map(function(_,i){return (d.g?d.g[i]:0)+(d.l?d.l[i]:0)});
+  d.und=d.u||d.t.map(function(){return 0});
+  d.last=-1;for(var i=0;i<=LAST;i++) if(d.t[i]>0) d.last=i;
+  d.first=-1;for(var j=LAST;j>=0;j--) if(d.t[j]>0) d.first=j;
+  d.now=d.t[LAST];
+  d.key=d.label.toLowerCase();
+});
+
+/* ---------- search ---------- */
+var matches=[], active=-1;
+function search(term){
+  term=term.trim().toLowerCase();
+  if(!term) return [];
+  var toks=term.split(/\s+/);
+  var out=[];
+  DATA.forEach(function(d){
+    var hay=d.key+" "+d.c.join(" ").toLowerCase(), ok=true, score=0;
+    for(var i=0;i<toks.length;i++){
+      var p=hay.indexOf(toks[i]);
+      if(p<0){ok=false;break}
+      if(p===0) score+=3; else if(hay.charAt(p-1)===" ") score+=2; else score+=0;
+    }
+    if(ok){ if(d.key===term) score+=10; if(d.now>0) score+=1; out.push({d:d,s:score}); }
+  });
+  out.sort(function(a,b){return b.s-a.s || b.d.t[LAST]-a.d.t[LAST]});
+  return out.slice(0,12).map(function(x){return x.d});
+}
+function hl(label,term){
+  var toks=term.trim().toLowerCase().split(/\s+/).filter(Boolean), out=esc(label);
+  toks.forEach(function(t){ var re=new RegExp("("+t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","ig"); out=out.replace(re,function(m,a,off){return /^&|;$/.test(m)?m:"<mark>"+a+"</mark>"}) });
+  return out;
+}
+function renderList(){
+  if(!matches.length){
+    if(q.value.trim()){list.innerHTML='<div class="empty">No major matches “'+esc(q.value.trim())+'”. Try a shorter word.</div>';list.hidden=false;q.setAttribute("aria-expanded","true")}
+    else close();
+    return;
+  }
+  list.innerHTML=matches.map(function(d,i){
+    return '<li role="option" id="opt'+i+'" data-i="'+i+'" aria-selected="'+(i===active)+'"><span>'+hl(d.label,q.value)+'</span><small>'+(d.now>0?fmt.format(d.now)+" in 2025":"ended "+YEARS[d.last])+'</small></li>';
+  }).join("");
+  list.hidden=false; q.setAttribute("aria-expanded","true");
+  if(active>=0) q.setAttribute("aria-activedescendant","opt"+active); else q.removeAttribute("aria-activedescendant");
+}
+function close(){list.hidden=true;q.setAttribute("aria-expanded","false");active=-1}
+q.addEventListener("input",function(){matches=search(q.value);active=matches.length?0:-1;renderList()});
+q.addEventListener("focus",function(){ if(q.value.trim()){matches=search(q.value);renderList()} });
+q.addEventListener("keydown",function(e){
+  if(e.key==="ArrowDown"){e.preventDefault();if(matches.length){active=(active+1)%matches.length;renderList();scrollActive()}}
+  else if(e.key==="ArrowUp"){e.preventDefault();if(matches.length){active=(active-1+matches.length)%matches.length;renderList();scrollActive()}}
+  else if(e.key==="Enter"){e.preventDefault();if(active>=0)pick(matches[active])}
+  else if(e.key==="Escape"){close()}
+});
+function scrollActive(){var el=$("opt"+active);if(el&&el.scrollIntoView)el.scrollIntoView({block:"nearest"})}
+list.addEventListener("mousedown",function(e){var li=e.target.closest("li");if(li){e.preventDefault();pick(matches[+li.dataset.i])}});
+document.addEventListener("click",function(e){if(!e.target.closest(".search"))close()});
+$("clear").addEventListener("click",function(){q.value="";close();q.focus()});
+
+/* ---------- selection ---------- */
+var cur=null, level="all";
+function pick(d,noHash){
+  cur=d; level="all"; q.value=d.label; close(); matches=[];
+  render();
+  try{ if(!noHash && window.history && history.replaceState) history.replaceState(null,"","?major="+encodeURIComponent(d.label)) }catch(e){}
+}
+function series(d){
+  var s={all:d.t,u:d.und,g:d.grad}[level]||d.t;
+  return s.map(function(v,i){ return (i<d.first||i>d.last)?null:v });
+}
+function hasBoth(d){return d.und.some(function(v){return v>0}) && d.grad.some(function(v){return v>0})}
+
+function render(){
+  var d=cur; if(!d){result.innerHTML="";return}
+  var s=series(d), f=d.first, l=d.last;
+  var start=s[f], end=s[l], diff=end-start, pct=start?diff/start*100:null;
+  var peak=0,pi=f; s.forEach(function(v,i){if(v!==null&&v>peak){peak=v;pi=i}});
+  var cls=diff>0?"up":diff<0?"down":"";
+  var sign=diff>0?"+":diff<0?"−":"";
+  var ended=l<LAST;
+  var levelNames={all:"all students",u:"undergraduates",g:"graduate & professional students"};
+
+  var html='<h2>'+esc(d.label)+'</h2><p class="colleges">'+d.c.map(function(c){return esc(shortCollege(c))}).filter(function(v,i,a){return a.indexOf(v)===i}).join(" · ")+'</p>';
+  html+='<dl class="stats">'+
+    '<div class="stat"><dt>Fall '+YEARS[l]+'</dt><dd>'+fmt.format(end)+'<small>'+(ended?'last year listed':'students')+'</small></dd></div>'+
+    '<div class="stat"><dt>Since Fall '+YEARS[f]+'</dt><dd class="'+cls+'">'+(pct===null||l===f?'—':sign+Math.abs(Math.round(pct))+'%')+'<small>'+(l===f?'only one year of data':sign+fmt.format(Math.abs(diff))+' students')+'</small></dd></div>'+
+    '<div class="stat"><dt>Peak</dt><dd>'+fmt.format(peak)+'<small>Fall '+YEARS[pi]+'</small></dd></div></dl>';
+
+  html+='<div class="charthead"><p class="charttitle">Students by fall term <span>· '+levelNames[level]+'</span></p>';
+  if(hasBoth(d)) html+='<div class="seg" role="group" aria-label="Student level">'+[["all","All"],["u","Undergrad"],["g","Grad"]].map(function(x){return '<button type="button" data-lv="'+x[0]+'" aria-pressed="'+(level===x[0])+'">'+x[1]+'</button>'}).join("")+'</div>';
+  html+='</div><div class="chartwrap" id="cw"><svg id="svg" role="img" aria-label="'+esc(summary(d,s))+'"></svg><div class="tip" id="tip"></div></div>';
+  html+='<p class="take">'+takeaway(d,s,pi,peak)+'</p>';
+  html+='<details><summary>See the numbers</summary><table><thead><tr><th>Fall</th><th>Students</th>'+(hasBoth(d)?'<th>Undergrad</th><th>Grad</th>':'')+'</tr></thead><tbody>'+
+    YEARS.map(function(y,i){ if(i<f||i>l) return ""; return '<tr><td>'+y+'</td><td>'+fmt.format(d.t[i])+'</td>'+(hasBoth(d)?'<td>'+fmt.format(d.und[i])+'</td><td>'+fmt.format(d.grad[i])+'</td>':'')+'</tr>'}).join("")+'</tbody></table></details>';
+  result.innerHTML=html;
+  draw(d,s);
+  Array.prototype.forEach.call(result.querySelectorAll("[data-lv]"),function(b){b.addEventListener("click",function(){level=b.dataset.lv;render()})});
+  resize();
+}
+function summary(d,s){
+  return d.label+": "+YEARS.map(function(y,i){return s[i]===null?"":y+": "+s[i]}).filter(Boolean).join(", ");
+}
+function takeaway(d,s,pi,peak){
+  var f=d.first,l=d.last,start=s[f],end=s[l],diff=end-start;
+  var nm="<strong>"+esc(d.label)+"</strong>";
+  if(l<LAST) return nm+" had no students listed in Fall "+YEARS[LAST]+". Its last year in the data was Fall "+YEARS[l]+", with "+fmt.format(end)+" students.";
+  if(l===f) return nm+" first appears in Fall "+YEARS[f]+" with "+fmt.format(end)+" students.";
+  var lowv=Infinity,li=f;s.forEach(function(v,i){if(v!==null&&v<lowv){lowv=v;li=i}});
+  var verb=diff>0?"grew":diff<0?"shrank":"held steady";
+  var out=nm+" "+verb+(diff?" by "+Math.abs(Math.round(diff/start*100))+"% ("+fmt.format(Math.abs(diff))+" students)":"")+" between Fall "+YEARS[f]+" and Fall "+YEARS[l]+".";
+  if(pi!==l&&pi!==f) out+=" Enrollment peaked at "+fmt.format(peak)+" in Fall "+YEARS[pi]+".";
+  else if(li!==f&&li!==l) out+=" It bottomed out at "+fmt.format(lowv)+" in Fall "+YEARS[li]+".";
+  return out;
+}
+
+/* ---------- chart ---------- */
+var W=0;
+function niceMax(v){ var raw=v/4, p=Math.pow(10,Math.floor(Math.log10(raw))), n=raw/p; var st=(n<=1?1:n<=2?2:n<=5?5:10)*p; if(st<1) st=1; return st*4 }
+function draw(d,s){
+  var svg=$("svg"); if(!svg) return;
+  var w=$("cw").clientWidth||600, h=Math.max(240,Math.min(360,w*0.5));
+  var small=w<480, m={t:22,r:small?30:44,b:30,l:small?36:44};
+  var vals=s.filter(function(v){return v!==null}), max=niceMax(Math.max.apply(null,vals)*1.08);
+  var iw=w-m.l-m.r, ih=h-m.t-m.b;
+  var x=function(i){return m.l+(YEARS.length===1?iw/2:i*iw/(YEARS.length-1))}, y=function(v){return m.t+ih-(v/max)*ih};
+  svg.setAttribute("viewBox","0 0 "+w+" "+h); svg.setAttribute("width",w); svg.setAttribute("height",h);
+  var g='<g class="grid axis">';
+  var ticks=4;
+  for(var t=0;t<=ticks;t++){var v=max*t/ticks;g+='<line class="'+(t===0?"base":"")+'" x1="'+m.l+'" x2="'+(w-m.r)+'" y1="'+y(v)+'" y2="'+y(v)+'"/><text x="'+(m.l-8)+'" y="'+(y(v)+4)+'" text-anchor="end">'+fmt.format(Math.round(v*10)/10)+'</text>'}
+  YEARS.forEach(function(yr,i){ if(small&&i%2===1&&i!==LAST) return; g+='<text x="'+x(i)+'" y="'+(h-8)+'" text-anchor="middle">'+(small?"’"+String(yr).slice(2):yr)+'</text>'});
+  g+='</g>';
+  var pts=[],f=d.first,l=d.last;
+  for(var i=f;i<=l;i++) pts.push([x(i),y(s[i]),i]);
+  var path=pts.map(function(p,k){return (k?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)}).join(" ");
+  var area=path+" L"+pts[pts.length-1][0]+" "+y(0)+" L"+pts[0][0]+" "+y(0)+" Z";
+  var dots=pts.map(function(p,k){var end=k===pts.length-1||k===0;return '<circle class="dot'+(k===pts.length-1?" end":"")+'" cx="'+p[0]+'" cy="'+p[1]+'" r="'+(end?5:4)+'"/>'}).join("");
+  var first=pts[0], last=pts[pts.length-1];
+  var labs='<text class="vlab" x="'+first[0]+'" y="'+(first[1]-11)+'" text-anchor="'+(first[0]<m.l+10?"start":"middle")+'">'+fmt.format(s[f])+'</text>';
+  if(pts.length>1) labs+='<text class="vlab" x="'+last[0]+'" y="'+(last[1]-11)+'" text-anchor="end">'+fmt.format(s[l])+'</text>';
+  svg.innerHTML=g+'<path class="area" d="'+area+'"/><path class="line" d="'+path+'"/>'+dots+labs+'<g class="hover" id="hv" style="display:none"><line y1="'+m.t+'" y2="'+(m.t+ih)+'"/></g><rect id="hit" x="'+m.l+'" y="0" width="'+iw+'" height="'+h+'" fill="transparent" style="touch-action:pan-y"/>';
+  var hit=$("hit"), hv=$("hv"), tip=$("tip");
+  function move(ev){
+    var r=svg.getBoundingClientRect(), px=(ev.clientX-r.left)*(w/r.width);
+    var best=null,bd=1e9; pts.forEach(function(p){var dd=Math.abs(p[0]-px);if(dd<bd){bd=dd;best=p}});
+    if(!best) return;
+    hv.style.display="block"; hv.firstChild.setAttribute("x1",best[0]); hv.firstChild.setAttribute("x2",best[0]);
+    var prev=best[2]>f?s[best[2]-1]:null, ch=prev!==null&&prev!==undefined?s[best[2]]-prev:null;
+    tip.innerHTML="<b>"+fmt.format(s[best[2]])+"</b> students<br>Fall "+YEARS[best[2]]+(ch!==null?" · "+(ch>0?"+":ch<0?"−":"")+fmt.format(Math.abs(ch))+" vs. prior year":"");
+    tip.style.display="block";
+    var tx=Math.max(70,Math.min(w-70,best[0])); tip.style.left=tx+"px"; tip.style.top=Math.max(34,best[1]-12)+"px";
+  }
+  hit.addEventListener("pointermove",move); hit.addEventListener("pointerdown",move);
+  hit.addEventListener("pointerleave",function(){hv.style.display="none";tip.style.display="none"});
+}
+
+/* ---------- browse lists ---------- */
+function steady(d){for(var i=1;i<=LAST;i++){var r=d.t[i]/d.t[i-1];if(!(r>0.55&&r<1.8))return false}return true}
+function browse(){
+  var big=DATA.filter(function(d){return d.now>0}).sort(function(a,b){return b.now-a.now}).slice(0,8);
+  var movers=DATA.filter(function(d){return d.first===0&&d.last===LAST&&d.t[0]>=40&&d.now>0&&steady(d)&&!/UNDECLARED|VISIT|CONSORTIUM|EXCHANGE|CERTIF/.test(d.n)}).map(function(d){return{d:d,p:(d.now-d.t[0])/d.t[0]}});
+  var up=movers.slice().sort(function(a,b){return b.p-a.p}).slice(0,8), dn=movers.slice().sort(function(a,b){return a.p-b.p}).slice(0,8);
+  function col(h,sub,arr,fn){return '<div class="col"><h4>'+h+'</h4><ol>'+arr.map(function(x){var d=x.d||x;return '<li><button type="button" data-k="'+esc(d.n)+'"><span>'+esc(d.label)+'</span><span>'+fn(x)+'</span></button></li>'}).join("")+'</ol></div>'}
+  $("browse").innerHTML='<h3>Or start with these</h3><div class="cols">'+
+    col("Largest majors","",big,function(d){return fmt.format(d.now)})+
+    col("Fastest growing","",up,function(x){return '<span class="up">+'+Math.round(x.p*100)+'%</span>'})+
+    col("Biggest declines","",dn,function(x){return '<span class="down">−'+Math.round(Math.abs(x.p)*100)+'%</span>'})+
+    '</div><p class="foot" style="border:0;margin:10px 0 0;padding:0">Growth and decline compare Fall 2016 with Fall 2025 for majors with at least 40 students in 2016 and no abrupt one-year jumps, which usually signal a renamed or restructured program rather than a real trend.</p>';
+  $("browse").addEventListener("click",function(e){var b=e.target.closest("button[data-k]");if(!b)return;var d=byName(b.dataset.k);if(d){pick(d);window.scrollTo&&$("q").scrollIntoView({behavior:"smooth",block:"start"})}});
+}
+function byName(n){for(var i=0;i<DATA.length;i++) if(DATA[i].n===n) return DATA[i]}
+
+/* quick picks */
+(function(){
+  var picks=["JOURNALISM","ADVERTISING & PUBLIC RELATIONS","COMPUTER SCIENCE","NURSING","ENGLISH","PSYCHOLOGY"];
+  var html='Popular: ';
+  picks.forEach(function(n){var d=byName(n);if(d) html+='<button type="button" data-k="'+esc(n)+'">'+esc(d.label)+'</button>'});
+  $("quick").innerHTML=html;
+  $("quick").addEventListener("click",function(e){var b=e.target.closest("button[data-k]");if(b)pick(byName(b.dataset.k))});
+})();
+
+/* ---------- iframe support ---------- */
+var inFrame=false; try{inFrame=window.self!==window.top}catch(e){inFrame=true}
+function post(){
+  if(!inFrame) return;
+  var h=Math.ceil(document.documentElement.getBoundingClientRect().height);
+  try{window.parent.postMessage({type:"dn-majors-resize",height:h},"*")}catch(e){}
+}
+function resize(){ if(cur) draw(cur,series(cur)); post() }
+var rt; window.addEventListener("resize",function(){clearTimeout(rt);rt=setTimeout(resize,80)});
+if(window.ResizeObserver) new ResizeObserver(post).observe(document.body);
+
+if(!inFrame){
+  $("embed").hidden=false;
+  var u=location.origin+location.pathname.replace(/index\.html$/,"");
+  $("embedcode").textContent='<iframe src="'+u+'" title="Find a UNL major: enrollment trends" width="100%" height="900" style="border:0;max-width:860px" loading="lazy"></iframe>\n<script>window.addEventListener("message",function(e){if(e.data&&e.data.type==="dn-majors-resize"){var f=document.querySelectorAll("iframe[src*=\\"'+location.host+'\\"]");for(var i=0;i<f.length;i++)if(f[i].contentWindow===e.source)f[i].style.height=e.data.height+"px"}})<\/script>';
+}
+
+/* ---------- init ---------- */
+browse();
+var param=(new URLSearchParams(location.search).get("major")||"").trim().toLowerCase();
+var start=param&&(DATA.filter(function(d){return d.key===param})[0]||search(param)[0]);
+pick(start||byName("JOURNALISM")||DATA[0],true);
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(post);
+post();
+})();
+</script>
+</body>
+</html>
