@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>DNlives – News Reader Run</title>
+<title>DNlives – Lincoln News Run</title>
 <style>
   :root { --ink:#0d1b2a; --paper:#f6f1e7; --red:#d62828; --gold:#fcbf49; --blue:#2a6fdb; }
   * { box-sizing: border-box; }
@@ -59,6 +59,7 @@
   summary { cursor:pointer; font-weight:700; line-height:1.35; }
   summary small { display:inline; margin-right:6px; }
   details p { font-size:15px; margin:8px 0 4px; max-width:none; }
+  .card a { color:var(--blue); font:700 15px system-ui, sans-serif; }
   details .why2 { color:var(--gold); font-size:14px; }
   #collected details small { display:inline; }
 </style>
@@ -79,6 +80,7 @@
     <h2 id="sHead"></h2>
     <p class="body" id="sBody"></p>
     <div class="why"><b>Why it matters</b><span id="sWhy"></span></div>
+    <p class="body"><a id="sLink" href="#" target="_blank" rel="noopener">Read the full article on klkntv.com →</a></p>
     <button id="sGo" style="width:100%">Keep running</button>
   </div>
 </div>
@@ -92,8 +94,8 @@
 
 <div id="start" class="screen">
   <h1>DN<em>lives</em></h1>
-  <p>The news reader run. Sprint through the subway, grab the <b>real news</b> and dodge the <b>fake news</b>. Every few papers the game pauses so you can <b>read the full story</b> and see why it matters.</p>
-  <div class="keys">The stories are fictional practice examples written for this game.</div>
+  <p>The Lincoln news run. Sprint through the subway, grab <b>Lincoln, NE news stories</b> and dodge the <b>fake rumors</b>. Every few papers the game pauses so you can <b>read the story</b> and see why it matters, with a link to the full article.</p>
+  <div class="keys">Stories are summaries of recent Lincoln news from KLKN-TV. The FAKE rumors are made up for the game.</div>
   <div class="legend">
     <span>📰 <b>Collect</b> real news</span>
     <span>🟥 <b>Avoid</b> FAKE stamps</span>
@@ -117,52 +119,44 @@
 
 <script>
 /* ---------- EDIT THE NEWS HERE ----------
-   real: headlines the player collects. fake: stamped FAKE items they must dodge. */
+   REAL: Lincoln, NE stories from KLKN-TV (summarized in our own words, with a link to the original).
+   FAKE: made-up rumors players must dodge. */
 const REAL = [
-  {cat:"World", head:"Leaders agree on new deal to cut shipping emissions",
-   story:"Representatives from 40 countries agreed on Thursday to cut greenhouse gas emissions from cargo ships by a third by 2035. Ships will have to switch to cleaner fuels and slow down in busy ports. Shipping carries about 80% of the world's goods, so the change touches almost everything people buy.",
-   why:"Shipping is a large and growing source of pollution, so rules here affect climate targets."},
-  {cat:"Science", head:"Researchers map the deepest part of the Atlantic in record detail",
-   story:"A team of ocean scientists has produced the most detailed map yet of the Puerto Rico Trench, the deepest part of the Atlantic at about 8,400 metres. They used sonar carried by a robot submarine over 14 weeks. The map reveals steep cliffs and valleys nobody knew existed.",
-   why:"Knowing the sea floor helps scientists predict underwater landslides and tsunamis."},
-  {cat:"Tech", head:"Open-source team releases free tool for translating rare languages",
-   story:"A volunteer team has released a free, open-source tool that translates 30 rare languages, many spoken by fewer than 100,000 people. Native speakers helped train it by recording everyday phrases. Anyone can download the tool and help improve it.",
-   why:"Many languages are disappearing; tools like this help communities keep them alive."},
-  {cat:"Health", head:"Study links regular walking breaks to better focus in students",
-   story:"A study of 1,200 university students found that those who took a five-minute walk after every hour of studying scored higher on concentration tests. The effect was strongest in the afternoon. Students who studied for long stretches without breaks made more mistakes.",
-   why:"Small habits can improve learning without adding extra study time."},
-  {cat:"Sport", head:"Underdog club wins the national cup in a last-minute thriller",
-   story:"Second-division Riverside FC won the national cup 2–1 with a goal in the 93rd minute. The team had been given little chance against the league champions. It is the club's first major trophy in 61 years, and fans filled the city centre to celebrate.",
-   why:"The result was a big surprise, which is why upsets get so much attention."},
-  {cat:"Local", head:"City adds 40 km of protected bike lanes downtown",
-   story:"The city council voted 7–2 to build 40 km of protected bike lanes downtown by next summer. Concrete barriers will separate bikes from cars. Some shop owners worry about losing parking, so the council will review the plan after one year.",
-   why:"Local decisions change daily life: how people travel, how safe streets are, and how businesses do."},
-  {cat:"Climate", head:"Solar farm now powers every home in the valley",
-   story:"A new solar farm with 120,000 panels has started running in Green Valley, producing enough electricity for all 18,000 homes there. Extra power is stored in large batteries so it can be used at night. Construction took 14 months.",
-   why:"Storage is the key: solar panels only help if power is still available after sunset."},
-  {cat:"Culture", head:"Museum returns 200 historic artifacts to their country of origin",
-   story:"A national museum agreed to return 200 historic artifacts after a three-year review of how they were acquired. The items include pottery, tools and jewellery more than 2,000 years old. A joint exhibition will tour both countries.",
-   why:"Debates about who should own cultural heritage are growing around the world."},
-  {cat:"Economy", head:"Inflation slows for third month as food prices ease",
-   story:"Official figures show prices rose 2.8% over the past year, down from 3.4% the month before. Food prices eased the most, while rents kept rising. Economists say interest rates could be lowered if the trend continues.",
-   why:"Inflation means your money buys less. When it slows, household budgets feel less pressure."},
-  {cat:"Campus", head:"University opens 24-hour study hub after student petition",
-   story:"After a petition signed by 3,000 students, the university will open a 24-hour study hub in the main library from next semester. It will have quiet rooms, free Wi-Fi and a late-night café, with security staff on duty overnight.",
-   why:"It shows how students organizing together can change campus policy."},
-  {cat:"World", head:"Rescue teams reach all trapped hikers safely after storm",
-   story:"Rescue teams reached all 12 hikers trapped on Mount Alder after a storm closed the trail for two days. Helicopters lifted them out as the weather cleared, and none were seriously hurt. Officials urged hikers to check forecasts before setting out.",
-   why:"It is a reminder that planning ahead keeps people safe outdoors."},
-  {cat:"Health", head:"New vaccine shows strong results in late-stage trial",
-   story:"A new vaccine against a common childhood infection prevented illness in 9 out of 10 children in a trial of 20,000 participants. Side effects were mild, mostly a sore arm. Regulators must now review the data before it can be offered to the public.",
-   why:"A good trial result is not the same as approval. Regulators still have to check the evidence."},
+  {cat:"Environment", head:"Cans for cash: aluminum recycling payments return to the Haymarket",
+   story:"Uribe Refuse Services has bought a recycling plant near 4th and J streets in Lincoln's Haymarket, and its RecycleLink program is paying people for aluminum cans again. Staff say customers were upset when the payments stopped. The plant manager says few places in that part of town take cans, and some residents can't afford curbside recycling service.",
+   why:"Paying for cans gives people a reason to recycle instead of throw cans away, and it helps neighbors with fewer options.",
+   url:"https://www.klkntv.com/cans-for-cash-uribe-refuse-revives-payments-for-aluminum-cans-at-haymarket-recycling-center/"},
+  {cat:"Health", head:"Lincoln groups get nearly $1.7 million from the Community Health Endowment",
+   story:"The Community Health Endowment of Lincoln approved grants totaling $1,683,762 for Lincoln organizations. Its trustees also announced that another $624,000 will be available for grants in spring 2027.",
+   why:"Grants like these pay for local health programs, so they affect services many Lincoln residents rely on.",
+   url:"https://www.klkntv.com/lincoln-organizations-awarded-nearly-1-7-million-from-community-health-endowment/"},
+  {cat:"Schools", head:"LPS and LPD share new data on school resource officers",
+   story:"Lincoln Public Schools and the Lincoln Police Department presented data they collected together on the kinds of incidents school resource officers (SROs) respond to most. A district official says the data shows students feel safer with SROs around and feel listened to when an officer responds to their call.",
+   why:"Schools and police are using data, not just opinions, to judge whether a safety program is working.",
+   url:"https://www.klkntv.com/lps-and-lpd-release-new-data-about-lincolns-school-resource-officers-program/"},
+  {cat:"Education", head:"SCC breaks ground on its second Lincoln residence hall",
+   story:"Southeast Community College began construction on Arbor Hall, a 175,000-square-foot residence hall on the north side of its Lincoln campus. It will have 230 beds, study spaces, common areas and a dining hall seating 300. School leaders say living on campus helps students feel they belong.",
+   why:"More housing on campus changes what community college looks like, giving students a more traditional college experience.",
+   url:"https://www.klkntv.com/scc-breaks-ground-on-second-lincoln-residence-hall/"},
+  {cat:"Community", head:"Lincoln's veterans parade group helps veterans all year long",
+   story:"The nonprofit that organizes Lincoln's annual veterans parade does more than put on an event. Its president, a Marine Corps veteran who has led the group since 2018, says many veterans feel lonely after returning home, so the group supports them throughout the year.",
+   why:"Honoring veterans is more than one day a year: many face real challenges after they leave the service.",
+   url:"https://www.klkntv.com/lincoln-veterans-day-parade-organizers-work-to-honor-veterans-year-round/"},
+  {cat:"Local", head:"Lincoln senior living facility starts building independent-living cottages",
+   story:"Cedarhurst Senior Living of Lincoln, which opened in August 2026 with assisted living and memory care, has started building 20 independent-living cottages. Construction is expected to finish in fall 2027.",
+   why:"As Lincoln's older population grows, new housing options let people stay in one community as their needs change.",
+   url:"https://www.klkntv.com/lincoln-senior-living-facility-begins-construction-to-offer-independent-living/"},
+  {cat:"State", head:"Nebraska receives $219.2 million federal grant for rural health care",
+   story:"The Nebraska Department of Health and Human Services announced a $219.2 million federal grant for the second year of the Rural Health Transformation Program. The program gives states money and flexibility to bring care closer to home and strengthen rural health systems.",
+   why:"Rural communities often live far from hospitals, so funding like this can change how easily people get care.",
+   url:"https://www.klkntv.com/nebraska-receives-219-2-million-federal-grant-for-rural-healthcare/"},
 ];
 const FAKE = [
-  ["Scientists confirm the moon will be sold to a private company", "Check the source: no agency has said this."],
-  ["Eating chocolate for breakfast proven to raise exam scores by 40%", "Too good to be true; no study backs it."],
-  ["Government to ban the internet every Friday", "Never happened. Look for an official statement."],
-  ["Famous actor secretly replaced by a robot, insiders say", "'Insiders say' is not a source."],
-  ["Drinking lemon water cures all diseases, doctors hate this trick", "Clickbait. Real health news cites studies."],
-  ["Aliens land in the capital, officials 'stay silent'", "No credible outlet reports it. Verify first."],
+  ["Lincoln to ban all cars downtown starting next week", "Check the source: no city announcement says this."],
+  ["Every Lincoln bus ride to be free forever, officials say", "'Officials say' with no names is not a source."],
+  ["Giant sinkhole swallows the Haymarket overnight", "Look for photos and reports from several trusted outlets."],
+  ["Lincoln schools to start classes at midnight", "Too strange to be true without an official notice."],
+  ["Lincoln renamed 'Husker City' by state law", "Verify with a government or major news source first."],
 ];
 
 /* ---------- setup ---------- */
@@ -398,7 +392,7 @@ function drawPlayer() {
 function resume() { ['story','list'].forEach(i => $(i).classList.add('hidden')); G.inv = Math.max(G.inv, 2); state = 'play'; }
 function openStory(n) {
   state = 'read';
-  $('sCat').textContent = n.cat; $('sHead').textContent = n.head; $('sBody').textContent = n.story; $('sWhy').textContent = n.why;
+  $('sCat').textContent = n.cat; $('sHead').textContent = n.head; $('sBody').textContent = n.story; $('sWhy').textContent = n.why; $('sLink').href = n.url;
   $('story').classList.remove('hidden'); $('story').scrollTop = 0;
 }
 function fillList(box) {
@@ -409,7 +403,9 @@ function fillList(box) {
     c.textContent = n.cat; s.appendChild(c); s.appendChild(document.createTextNode(n.head));
     const p = document.createElement('p'); p.textContent = n.story;
     const w = document.createElement('p'); w.className = 'why2'; w.textContent = 'Why it matters: ' + n.why;
-    d.append(s, p, w); box.appendChild(d);
+    const a = document.createElement('a'); a.href = n.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Read the full KLKN article \u2192'; a.style.color = '#fcbf49';
+    const ap = document.createElement('p'); ap.appendChild(a);
+    d.append(s, p, w, ap); box.appendChild(d);
   }
 }
 $('sGo').onclick = resume;
