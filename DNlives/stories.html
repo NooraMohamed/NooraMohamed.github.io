@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>DNlives – News Reader Run</title>
+<style>
+  :root { --ink:#0d1b2a; --paper:#f6f1e7; --red:#d62828; --gold:#fcbf49; --blue:#2a6fdb; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; height:100%; background:var(--ink); overflow:hidden;
+    font-family: Georgia, "Times New Roman", serif; color:var(--paper);
+    -webkit-user-select:none; user-select:none; touch-action:none; overscroll-behavior:none; }
+  #game { position:fixed; inset:0; width:100%; height:100%; display:block; }
+
+  #hud { position:fixed; top:0; left:0; right:0; pointer-events:none; }
+  #stats { display:flex; justify-content:space-between; align-items:center; padding:10px 14px;
+    font:700 16px/1 system-ui, sans-serif; text-shadow:0 1px 3px #000a; }
+  #stats span { background:#0d1b2acc; padding:6px 10px; border-radius:20px; }
+  #ticker { margin:0 10px; display:flex; align-items:stretch; background:#0d1b2af0; border:2px solid var(--paper);
+    border-radius:6px; overflow:hidden; min-height:44px; transition:background .2s; }
+  #ticker.bad { background:#5a0f0ff0; }
+  #tag { background:var(--red); color:#fff; font:800 12px/1 system-ui, sans-serif; letter-spacing:.08em;
+    padding:0 10px; display:flex; align-items:center; text-transform:uppercase; white-space:nowrap; }
+  #tag.bad { background:#000; }
+  #headline { padding:8px 12px; font-size:15px; line-height:1.25; display:flex; align-items:center; }
+  #ticker.pop { animation: pop .35s ease-out; }
+  @keyframes pop { from { transform:scale(.92); } to { transform:scale(1); } }
+
+  .screen { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:20px; background:#0d1b2ae6; gap:14px; overflow:auto; touch-action:auto; z-index:10; }
+  .screen.hidden { display:none; }
+  h1 { margin:0; font-size:clamp(34px,8vw,64px); letter-spacing:-.02em; }
+  h1 em { color:var(--red); font-style:normal; }
+  p { margin:0; max-width:520px; line-height:1.45; font-size:17px; }
+  .keys { font:14px/1.5 system-ui, sans-serif; opacity:.85; }
+  button { font:800 20px system-ui, sans-serif; background:var(--gold); color:var(--ink); border:0; border-radius:40px;
+    padding:14px 36px; cursor:pointer; box-shadow:0 4px 0 #b8860b; }
+  button:active { transform:translateY(2px); box-shadow:0 2px 0 #b8860b; }
+  .legend { display:flex; gap:18px; flex-wrap:wrap; justify-content:center; font:15px system-ui, sans-serif; }
+  .legend b { color:var(--gold); }
+  #readBtn.hidden { display:none; }
+  #collected, #listBox { max-width:560px; width:100%; text-align:left; font-size:15px; line-height:1.35; max-height:34vh; overflow:auto;
+    background:#ffffff12; border-radius:10px; padding:10px 14px; touch-action:pan-y; }
+  #collected > div { padding:5px 0; border-bottom:1px solid #ffffff22; }
+  #collected small, #listBox small { display:block; color:var(--gold); font:700 11px system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; }
+  #big { font:800 44px system-ui, sans-serif; color:var(--gold); }
+
+  #readBtn { position:fixed; right:12px; bottom:14px; font-size:15px; padding:10px 18px; z-index:5; }
+  .card { background:var(--paper); color:var(--ink); max-width:560px; width:100%; border-radius:12px; padding:20px 22px;
+    text-align:left; box-shadow:0 10px 40px #000a; }
+  .card .chip { display:inline-block; background:var(--red); color:#fff; font:800 11px system-ui, sans-serif;
+    letter-spacing:.1em; text-transform:uppercase; padding:4px 8px; border-radius:4px; }
+  .card h2 { margin:10px 0 10px; font-size:clamp(22px,5vw,28px); line-height:1.15; }
+  .card .body { font-size:18px; line-height:1.55; margin:0 0 12px; max-width:none; }
+  .card .why { background:#0d1b2a10; border-left:4px solid var(--blue); padding:8px 12px; font-size:16px; line-height:1.4; margin-bottom:14px; }
+  .card .why b { color:var(--blue); font:800 12px system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; display:block; }
+  .quiz { border-top:1px solid #0d1b2a30; padding-top:12px; }
+  .quiz .qq { font:700 16px system-ui, sans-serif; margin-bottom:8px; }
+  .opt { display:block; width:100%; text-align:left; font:600 16px system-ui, sans-serif; background:#fff; color:var(--ink);
+    border:2px solid #0d1b2a30; box-shadow:none; border-radius:10px; padding:10px 14px; margin-bottom:8px; }
+  .opt.ok { background:#c8f1d0; border-color:#2e9b49; }
+  .opt.no { background:#ffd0d0; border-color:var(--red); }
+  .opt:active { transform:none; box-shadow:none; }
+  .fb { font:700 15px system-ui, sans-serif; min-height:20px; margin-bottom:6px; }
+  details { border-bottom:1px solid #ffffff22; padding:6px 0; }
+  summary { cursor:pointer; font-weight:700; line-height:1.35; }
+  summary small { display:inline; margin-right:6px; }
+  details p { font-size:15px; margin:8px 0 4px; max-width:none; }
+  details .why2 { color:var(--gold); font-size:14px; }
+  #collected details small { display:inline; }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="hud">
+  <div id="stats"><span id="score">Score 0</span><span id="newsCount">📰 0</span><span id="lives">❤❤❤</span></div>
+  <div id="ticker"><div id="tag">News</div><div id="headline">Collect the newspapers. Dodge the fake news.</div></div>
+</div>
+
+<button id="readBtn" class="hidden">📖 Reading list</button>
+
+<div id="story" class="screen hidden">
+  <div class="card">
+    <span class="chip" id="sCat"></span>
+    <h2 id="sHead"></h2>
+    <p class="body" id="sBody"></p>
+    <div class="why"><b>Why it matters</b><span id="sWhy"></span></div>
+    <div class="quiz">
+      <div class="qq" id="sQ"></div>
+      <div id="sOpts"></div>
+      <div class="fb" id="sFb"></div>
+    </div>
+    <button id="sGo" style="width:100%">Keep running</button>
+  </div>
+</div>
+
+<div id="list" class="screen hidden">
+  <h1>Reading <em>list</em></h1>
+  <p>Tap a headline to read the story.</p>
+  <div id="listBox" class="collectedBox"></div>
+  <button id="listGo">Keep running</button>
+</div>
+
+<div id="start" class="screen">
+  <h1>DN<em>lives</em></h1>
+  <p>The news reader run. Sprint through the subway, grab the <b>real news</b> and dodge the <b>fake news</b>. Every few papers the game pauses so you can <b>read the full story</b>, see why it matters, and answer a quick question for bonus points.</p>
+  <div class="keys">The stories are fictional practice examples written for this game.</div>
+  <div class="legend">
+    <span>📰 <b>Collect</b> real news</span>
+    <span>🟥 <b>Avoid</b> FAKE stamps</span>
+    <span>🚆 Switch lanes</span>
+  </div>
+  <div class="keys">
+    Phone: swipe ← → to change lane, ↑ to jump, ↓ to slide.<br>
+    Laptop: ← → arrow keys to change lane, ↑ (or Space) to jump, ↓ to slide.
+  </div>
+  <button id="playBtn">Play</button>
+  <div class="keys" id="best"></div>
+</div>
+
+<div id="over" class="screen hidden">
+  <h1>Edition <em>closed</em></h1>
+  <div id="big"></div>
+  <p id="summary"></p>
+  <div id="collected"></div>
+  <button id="againBtn">Run again</button>
+</div>
+
+<script>
+/* ---------- EDIT THE NEWS HERE ----------
+   real: headlines the player collects. fake: stamped FAKE items they must dodge. */
+const REAL = [
+  {cat:"World", head:"Leaders agree on new deal to cut shipping emissions",
+   story:"Representatives from 40 countries agreed on Thursday to cut greenhouse gas emissions from cargo ships by a third by 2035. Ships will have to switch to cleaner fuels and slow down in busy ports. Shipping carries about 80% of the world's goods, so the change touches almost everything people buy.",
+   why:"Shipping is a large and growing source of pollution, so rules here affect climate targets.",
+   q:"What does the deal require ships to do?", o:["Switch to cleaner fuels","Stop carrying goods","Only travel at night"]},
+  {cat:"Science", head:"Researchers map the deepest part of the Atlantic in record detail",
+   story:"A team of ocean scientists has produced the most detailed map yet of the Puerto Rico Trench, the deepest part of the Atlantic at about 8,400 metres. They used sonar carried by a robot submarine over 14 weeks. The map reveals steep cliffs and valleys nobody knew existed.",
+   why:"Knowing the sea floor helps scientists predict underwater landslides and tsunamis.",
+   q:"How did the team make the map?", o:["Sonar on a robot submarine","Satellite photos","Divers with cameras"]},
+  {cat:"Tech", head:"Open-source team releases free tool for translating rare languages",
+   story:"A volunteer team has released a free, open-source tool that translates 30 rare languages, many spoken by fewer than 100,000 people. Native speakers helped train it by recording everyday phrases. Anyone can download the tool and help improve it.",
+   why:"Many languages are disappearing; tools like this help communities keep them alive.",
+   q:"Who helped train the tool?", o:["Native speakers recording phrases","Only big companies","Tourists"]},
+  {cat:"Health", head:"Study links regular walking breaks to better focus in students",
+   story:"A study of 1,200 university students found that those who took a five-minute walk after every hour of studying scored higher on concentration tests. The effect was strongest in the afternoon. Students who studied for long stretches without breaks made more mistakes.",
+   why:"Small habits can improve learning without adding extra study time.",
+   q:"How long was the walking break?", o:["Five minutes","One hour","Thirty minutes"]},
+  {cat:"Sport", head:"Underdog club wins the national cup in a last-minute thriller",
+   story:"Second-division Riverside FC won the national cup 2–1 with a goal in the 93rd minute. The team had been given little chance against the league champions. It is the club's first major trophy in 61 years, and fans filled the city centre to celebrate.",
+   why:"The result was a big surprise, which is why upsets get so much attention.",
+   q:"When was the winning goal scored?", o:["In the 93rd minute","In the 10th minute","In a penalty shoot-out"]},
+  {cat:"Local", head:"City adds 40 km of protected bike lanes downtown",
+   story:"The city council voted 7–2 to build 40 km of protected bike lanes downtown by next summer. Concrete barriers will separate bikes from cars. Some shop owners worry about losing parking, so the council will review the plan after one year.",
+   why:"Local decisions change daily life: how people travel, how safe streets are, and how businesses do.",
+   q:"What worry did some shop owners raise?", o:["Losing parking","Higher taxes","Too much noise"]},
+  {cat:"Climate", head:"Solar farm now powers every home in the valley",
+   story:"A new solar farm with 120,000 panels has started running in Green Valley, producing enough electricity for all 18,000 homes there. Extra power is stored in large batteries so it can be used at night. Construction took 14 months.",
+   why:"Storage is the key: solar panels only help if power is still available after sunset.",
+   q:"Why does the farm use batteries?", o:["To store power for night-time","To cool the panels","To clean the panels"]},
+  {cat:"Culture", head:"Museum returns 200 historic artifacts to their country of origin",
+   story:"A national museum agreed to return 200 historic artifacts after a three-year review of how they were acquired. The items include pottery, tools and jewellery more than 2,000 years old. A joint exhibition will tour both countries.",
+   why:"Debates about who should own cultural heritage are growing around the world.",
+   q:"How many artifacts are being returned?", o:["200","20","2,000"]},
+  {cat:"Economy", head:"Inflation slows for third month as food prices ease",
+   story:"Official figures show prices rose 2.8% over the past year, down from 3.4% the month before. Food prices eased the most, while rents kept rising. Economists say interest rates could be lowered if the trend continues.",
+   why:"Inflation means your money buys less. When it slows, household budgets feel less pressure.",
+   q:"Which prices eased the most?", o:["Food","Rent","Fuel"]},
+  {cat:"Campus", head:"University opens 24-hour study hub after student petition",
+   story:"After a petition signed by 3,000 students, the university will open a 24-hour study hub in the main library from next semester. It will have quiet rooms, free Wi-Fi and a late-night café, with security staff on duty overnight.",
+   why:"It shows how students organizing together can change campus policy.",
+   q:"What led to the new study hub?", o:["A student petition","A new law","A donation"]},
+  {cat:"World", head:"Rescue teams reach all trapped hikers safely after storm",
+   story:"Rescue teams reached all 12 hikers trapped on Mount Alder after a storm closed the trail for two days. Helicopters lifted them out as the weather cleared, and none were seriously hurt. Officials urged hikers to check forecasts before setting out.",
+   why:"It is a reminder that planning ahead keeps people safe outdoors.",
+   q:"How were the hikers rescued?", o:["By helicopter","They walked down","By boat"]},
+  {cat:"Health", head:"New vaccine shows strong results in late-stage trial",
+   story:"A new vaccine against a common childhood infection prevented illness in 9 out of 10 children in a trial of 20,000 participants. Side effects were mild, mostly a sore arm. Regulators must now review the data before it can be offered to the public.",
+   why:"A good trial result is not the same as approval. Regulators still have to check the evidence.",
+   q:"What happens next?", o:["Regulators review the data","It goes on sale tomorrow","The trial starts over"]},
+];
+const FAKE = [
+  ["Scientists confirm the moon will be sold to a private company", "Check the source: no agency has said this."],
+  ["Eating chocolate for breakfast proven to raise exam scores by 40%", "Too good to be true; no study backs it."],
+  ["Government to ban the internet every Friday", "Never happened. Look for an official statement."],
+  ["Famous actor secretly replaced by a robot, insiders say", "'Insiders say' is not a source."],
+  ["Drinking lemon water cures all diseases, doctors hate this trick", "Clickbait. Real health news cites studies."],
+  ["Aliens land in the capital, officials 'stay silent'", "No credible outlet reports it. Verify first."],
+];
+
+/* ---------- setup ---------- */
+const cv = document.getElementById('game'), ctx = cv.getContext('2d');
+const $ = id => document.getElementById(id);
+let W, H, DPR, horizon, groundY, laneW;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight;
+  cv.width = W * DPR; cv.height = H * DPR;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  horizon = H * 0.32; groundY = H * 0.88; laneW = Math.min(W * 0.28, H * 0.3);
+}
+addEventListener('resize', resize); resize();
+
+const MAXD = 70, F = 8;
+const sc = d => F / (F + Math.max(d, -F * 0.8));
+const px = (lane, s) => W / 2 + lane * laneW * s;
+const py = s => horizon + (groundY - horizon) * s;
+
+let G = null, state = 'start', last = 0;
+let best = 0; try { best = +localStorage.getItem('dnlives-best') || 0; } catch (e) {}
+$('best').textContent = best ? 'Best score: ' + best : '';
+
+function newGame() {
+  G = { t: 0, dist: 0, speed: 14, score: 0, lives: 3, news: [], objs: [], spawn: 20, lane: 0, targetLane: 0,
+        y: 0, vy: 0, slide: 0, inv: 0, flash: 0, unread: 0, bag: shuffle(REAL.slice()), fbag: shuffle(FAKE.slice()) };
+  updateHud();
+  say('News', 'Run! Grab the newspapers.', false);
+}
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = a => a[Math.random() * a.length | 0];
+function nextReal() { if (!G.bag.length) G.bag = shuffle(REAL.slice()); return G.bag.pop(); }
+function nextFake() { if (!G.fbag.length) G.fbag = shuffle(FAKE.slice()); return G.fbag.pop(); }
+
+/* ---------- HUD ---------- */
+function say(tag, text, bad) {
+  $('tag').textContent = tag; $('headline').textContent = text;
+  $('tag').className = bad ? 'bad' : ''; $('ticker').className = bad ? 'bad' : '';
+  const t = $('ticker'); t.classList.remove('pop'); void t.offsetWidth; t.classList.add('pop');
+}
+function updateHud() {
+  $('score').textContent = 'Score ' + Math.floor(G.score);
+  $('newsCount').textContent = '📰 ' + G.news.length;
+  $('lives').textContent = '❤'.repeat(Math.max(G.lives, 0)) + '🖤'.repeat(3 - Math.max(G.lives, 0));
+}
+
+/* ---------- spawning ---------- */
+function spawnRow() {
+  const lanes = shuffle([-1, 0, 1]);
+  const r = Math.random();
+  if (r < 0.3) {                       // line of news
+    const l = lanes[0];
+    for (let i = 0; i < 4; i++) G.objs.push({ type: 'news', lane: l, d: MAXD + i * 2.2, h: 0.5 });
+  } else {
+    const type = pick(['barrier', 'barrier', 'overhead', 'train']);
+    const n = Math.random() < 0.4 ? 2 : 1;
+    const len = type === 'train' ? rnd(6, 12) : 0.8;
+    for (let i = 0; i < n; i++) G.objs.push({ type, lane: lanes[i], d: MAXD, len });
+    const free = lanes[n];
+    const q = Math.random();
+    if (q < 0.55) {                    // news in the free lane
+      for (let i = 0; i < 3; i++) G.objs.push({ type: 'news', lane: free, d: MAXD + i * 2.2, h: 0.5 });
+    } else if (q < 0.8) {              // fake news bait
+      const f = nextFake();
+      G.objs.push({ type: 'fake', lane: free, d: MAXD + 1, h: 0.5, f });
+    }
+    if (type === 'barrier' && Math.random() < 0.5) // news hovering above a barrier
+      G.objs.push({ type: 'news', lane: lanes[0], d: MAXD - 0.2, h: 1.5 });
+  }
+}
+
+/* ---------- input ---------- */
+function move(dir) { if (state !== 'play') return; G.targetLane = Math.max(-1, Math.min(1, G.targetLane + dir)); }
+function jump() { if (state === 'play' && G.y <= 0.01) { G.vy = 7.2; G.slide = 0; } }
+function slide() { if (state !== 'play') return; G.slide = 0.65; if (G.y > 0) G.vy = -14; }
+addEventListener('keydown', e => {
+  const k = e.key.toLowerCase();
+  if (['arrowleft'].includes(k)) move(-1);
+  else if (['arrowright'].includes(k)) move(1);
+  else if (['arrowup', ' '].includes(k)) jump();
+  else if (['arrowdown'].includes(k)) slide();
+  else if (k === 'enter' && state !== 'play') start();
+  if ([' ', 'arrowup', 'arrowdown'].includes(k)) e.preventDefault();
+});
+let t0 = null;
+addEventListener('touchstart', e => { if (e.target.closest('button')) return; const t = e.changedTouches[0]; t0 = { x: t.clientX, y: t.clientY }; }, { passive: true });
+addEventListener('touchmove', e => { if (state === 'play') e.preventDefault(); }, { passive: false });
+addEventListener('touchend', e => {
+  if (!t0 || state !== 'play') return;
+  const t = e.changedTouches[0], dx = t.clientX - t0.x, dy = t.clientY - t0.y; t0 = null;
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) { jump(); return; }   // tap = jump
+  if (Math.abs(dx) > Math.abs(dy)) move(dx > 0 ? 1 : -1); else if (dy < 0) jump(); else slide();
+});
+
+/* ---------- update ---------- */
+function update(dt) {
+  G.t += dt; G.speed = Math.min(14 + G.t * 0.25, 30);
+  const adv = G.speed * dt; G.dist += adv; G.score += adv * 0.5;
+  G.lane += (G.targetLane - G.lane) * Math.min(1, dt * 14);
+  if (G.y > 0 || G.vy > 0) { G.vy -= 20 * dt; G.y += G.vy * dt; if (G.y <= 0) { G.y = 0; G.vy = 0; } }
+  if (G.slide > 0) G.slide -= dt;
+  if (G.inv > 0) G.inv -= dt;
+  G.spawn -= adv; if (G.spawn <= 0) { spawnRow(); G.spawn += rnd(9, 14) - Math.min(G.t * 0.05, 3); }
+
+  for (const o of G.objs) o.d -= adv;
+  for (const o of G.objs) {
+    if (o.dead || Math.abs(o.lane - G.lane) > 0.55) continue;
+    const front = o.d, back = o.d + (o.len || 0);
+    if (front > 0.5 || back < -0.5) continue;
+    if (o.type === 'news') { o.dead = true; collect(o); }
+    else if (o.type === 'fake') { o.dead = true; hitFake(o); }
+    else if (G.inv <= 0) {
+      let hit = false;
+      if (o.type === 'train') hit = true;
+      else if (o.type === 'barrier') hit = G.y < 0.55;
+      else if (o.type === 'overhead') hit = G.slide <= 0;
+      if (hit) { o.dead = true; crash(o.type === 'train' ? 'Ouch! Trains don’t stop for deadlines.' : 'Crash! Mind the obstacles.'); }
+    }
+  }
+  G.objs = G.objs.filter(o => !o.dead && o.d + (o.len || 0) > -3);
+  updateHud();
+}
+function collect(o) {
+  const n = nextReal();
+  G.news.push(n); G.score += 50; G.unread++;
+  say(n.cat + ' • NEW', n.head, false);
+  if (G.unread >= 3) { G.unread = 0; openStory(n); }
+}
+function hitFake(o) {
+  say('FAKE NEWS ✗', '“' + o.f[0] + '” – ' + o.f[1], true);
+  G.score = Math.max(0, G.score - 30); loseLife();
+}
+function crash(msg) { say('Crash', msg, true); loseLife(); }
+function loseLife() {
+  G.lives--; G.inv = 1.6; G.flash = 0.35;
+  if (navigator.vibrate) try { navigator.vibrate(80); } catch (e) {}
+  if (G.lives <= 0) gameOver();
+}
+
+/* ---------- drawing ---------- */
+function draw() {
+  const g = ctx.createLinearGradient(0, 0, 0, horizon);
+  g.addColorStop(0, '#13294b'); g.addColorStop(1, '#3b5b8c');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, horizon + 2);
+  // skyline
+  const off = G ? G.dist * 4 : 0;
+  ctx.fillStyle = '#0d1b2a';
+  for (let i = -1; i < 14; i++) {
+    const bw = W / 9, x = i * bw - (off % bw), h = 30 + ((i * 53 + Math.floor(off / bw) * 53) % 5 + 5) % 5 * 14;
+    ctx.fillRect(x, horizon - h, bw * 0.8, h + 2);
+  }
+  // ground
+  ctx.fillStyle = '#2b2f3a'; ctx.fillRect(0, horizon, W, H - horizon);
+  ctx.fillStyle = '#3a3f4d';
+  ctx.beginPath(); ctx.moveTo(px(-1.6, 0), py(0)); ctx.lineTo(px(1.6, 0), py(0));
+  ctx.lineTo(px(1.6, 1), groundY); ctx.lineTo(px(-1.6, 1), groundY); ctx.fill();
+  // rails + sleepers
+  ctx.strokeStyle = '#8a90a3'; ctx.lineWidth = 2;
+  for (const l of [-1.5, -0.5, 0.5, 1.5]) { ctx.beginPath(); ctx.moveTo(px(l, 0), py(0)); ctx.lineTo(px(l, 1), groundY); ctx.stroke(); }
+  const d0 = G ? (G.dist % 2) : 0;
+  for (let d = -d0; d < MAXD; d += 2) {
+    const s = sc(d); if (d < 0) continue;
+    ctx.lineWidth = Math.max(1, 3 * s); ctx.strokeStyle = '#4a4f5e';
+    ctx.beginPath(); ctx.moveTo(px(-1.6, s), py(s)); ctx.lineTo(px(1.6, s), py(s)); ctx.stroke();
+  }
+  if (!G) return;
+  const objs = G.objs.slice().sort((a, b) => b.d - a.d);
+  for (const o of objs) drawObj(o);
+  drawPlayer();
+  if (G.flash > 0) { ctx.fillStyle = 'rgba(214,40,40,' + (G.flash * 1.5) + ')'; ctx.fillRect(0, 0, W, H); G.flash -= 0.016; }
+}
+function drawObj(o) {
+  if (o.d > MAXD) return;
+  const s = sc(o.d), x = px(o.lane, s), y = py(s), u = laneW * s;
+  ctx.globalAlpha = o.d > MAXD - 8 ? Math.max(0, (MAXD - o.d) / 8) : 1;
+  if (o.type === 'barrier') {
+    ctx.fillStyle = '#f2c14e'; ctx.fillRect(x - u * 0.4, y - u * 0.5, u * 0.8, u * 0.5);
+    ctx.fillStyle = '#222';
+    for (let i = 0; i < 4; i++) ctx.fillRect(x - u * 0.4 + i * u * 0.2, y - u * 0.5, u * 0.1, u * 0.5);
+  } else if (o.type === 'overhead') {
+    ctx.fillStyle = '#777'; ctx.fillRect(x - u * 0.42, y - u * 1.5, u * 0.07, u * 1.5); ctx.fillRect(x + u * 0.35, y - u * 1.5, u * 0.07, u * 1.5);
+    ctx.fillStyle = '#d62828'; ctx.fillRect(x - u * 0.45, y - u * 1.5, u * 0.9, u * 0.8);
+    ctx.fillStyle = '#fff'; ctx.font = '800 ' + (u * 0.22) + 'px system-ui'; ctx.textAlign = 'center'; ctx.fillText('DUCK', x, y - u * 0.95);
+  } else if (o.type === 'train') {
+    const sb = sc(o.d + o.len), xb = px(o.lane, sb), yb = py(sb), ub = laneW * sb, h = 2.3;
+    ctx.fillStyle = '#5c6f91';
+    ctx.beginPath(); ctx.moveTo(x - u * 0.45, y - u * h); ctx.lineTo(x + u * 0.45, y - u * h);
+    ctx.lineTo(xb + ub * 0.45, yb - ub * h); ctx.lineTo(xb - ub * 0.45, yb - ub * h); ctx.fill();
+    ctx.fillStyle = '#2a6fdb'; ctx.fillRect(x - u * 0.45, y - u * h, u * 0.9, u * h);
+    ctx.fillStyle = '#fcbf49'; ctx.fillRect(x - u * 0.45, y - u * 0.9, u * 0.9, u * 0.12);
+    ctx.fillStyle = '#cfe3ff'; ctx.fillRect(x - u * 0.33, y - u * 1.9, u * 0.66, u * 0.6);
+    ctx.fillStyle = '#fff8'; ctx.fillRect(x - u * 0.3, y - u * 0.55, u * 0.12, u * 0.12); ctx.fillRect(x + u * 0.18, y - u * 0.55, u * 0.12, u * 0.12);
+  } else if (o.type === 'news') {
+    const bob = Math.sin(G.t * 5 + o.d) * u * 0.05, w = u * 0.36, h = u * 0.44;
+    const cy = y - u * o.h - bob;
+    ctx.fillStyle = '#0006'; ctx.beginPath(); ctx.ellipse(x, y, w * 0.6, w * 0.15, 0, 0, 6.3); ctx.fill();
+    ctx.fillStyle = '#f6f1e7'; ctx.fillRect(x - w / 2, cy - h / 2, w, h);
+    ctx.fillStyle = '#d62828'; ctx.fillRect(x - w / 2, cy - h / 2, w, h * 0.22);
+    ctx.fillStyle = '#333';
+    for (let i = 0; i < 3; i++) ctx.fillRect(x - w * 0.4, cy - h * 0.15 + i * h * 0.17, w * 0.8, Math.max(1, h * 0.06));
+    ctx.strokeStyle = '#fcbf49'; ctx.lineWidth = Math.max(1, u * 0.03); ctx.strokeRect(x - w / 2, cy - h / 2, w, h);
+  } else if (o.type === 'fake') {
+    const w = u * 0.7, h = u * 0.4, cy = y - u * 0.6;
+    ctx.save(); ctx.translate(x, cy); ctx.rotate(-0.15 + Math.sin(G.t * 6) * 0.05);
+    ctx.fillStyle = '#d62828'; ctx.fillRect(-w / 2, -h / 2, w, h);
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = Math.max(1, u * 0.03); ctx.strokeRect(-w / 2 + 3, -h / 2 + 3, w - 6, h - 6);
+    ctx.fillStyle = '#fff'; ctx.font = '900 ' + (u * 0.24) + 'px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('FAKE', 0, 0); ctx.restore(); ctx.textBaseline = 'alphabetic';
+  }
+  ctx.globalAlpha = 1;
+}
+function drawPlayer() {
+  if (G.inv > 0 && Math.floor(G.t * 16) % 2) return;
+  const u = laneW, x = px(G.lane, 1), y = groundY - G.y * u;
+  const sl = G.slide > 0, bh = u * (sl ? 0.35 : 0.8), bw = u * 0.3, run = Math.sin(G.t * 18);
+  ctx.fillStyle = '#0006'; ctx.beginPath(); ctx.ellipse(x, groundY, bw * 0.9, bw * 0.2, 0, 0, 6.3); ctx.fill();
+  if (!sl) {  // legs
+    ctx.fillStyle = '#1b3a6b';
+    const l = G.y > 0 ? 0 : run * u * 0.06;
+    ctx.fillRect(x - bw * 0.35, y - u * 0.28, bw * 0.28, u * 0.28 + l); ctx.fillRect(x + bw * 0.07, y - u * 0.28, bw * 0.28, u * 0.28 - l);
+  }
+  const top = y - bh;
+  ctx.fillStyle = '#6b4eff'; ctx.fillRect(x - bw * 0.55, top + bh * 0.3, bw * 0.3, bh * 0.5);          // backpack
+  ctx.fillStyle = '#fcbf49'; ctx.fillRect(x - bw / 2, top + bh * 0.25, bw, bh * (sl ? 0.6 : 0.45));    // hoodie
+  ctx.fillStyle = '#f1c9a5'; ctx.beginPath(); ctx.arc(x + bw * 0.05, top + bh * 0.12, bw * 0.38, 0, 6.3); ctx.fill(); // head
+  ctx.fillStyle = '#222'; ctx.fillRect(x - bw * 0.35, top - bw * 0.1, bw * 0.8, bw * 0.2);               // cap
+  ctx.fillStyle = '#fff'; ctx.fillRect(x - bw * 0.25, top + bh * 0.55, bw * 0.5, bh * 0.3 * (sl ? 0.5 : 1)); // newspaper under arm
+}
+
+/* ---------- reading ---------- */
+function resume() { ['story','list'].forEach(i => $(i).classList.add('hidden')); G.inv = Math.max(G.inv, 2); state = 'play'; }
+function openStory(n) {
+  state = 'read';
+  $('sCat').textContent = n.cat; $('sHead').textContent = n.head; $('sBody').textContent = n.story; $('sWhy').textContent = n.why;
+  $('sQ').textContent = n.q; $('sFb').textContent = ''; $('sFb').style.color = '';
+  const box = $('sOpts'); box.innerHTML = ''; let done = false;
+  shuffle(n.o.slice()).forEach(txt => {
+    const b = document.createElement('button'); b.className = 'opt'; b.textContent = txt;
+    b.onclick = () => {
+      if (done) return; done = true;
+      const ok = txt === n.o[0];
+      b.classList.add(ok ? 'ok' : 'no');
+      if (!ok) [...box.children].forEach(c => { if (c.textContent === n.o[0]) c.classList.add('ok'); });
+      if (ok) { G.score += 100; updateHud(); }
+      $('sFb').textContent = ok ? '✓ Correct! +100' : '✗ Not quite – the answer is highlighted.';
+      $('sFb').style.color = ok ? '#2e9b49' : '#d62828';
+    };
+    box.appendChild(b);
+  });
+  $('story').classList.remove('hidden'); $('story').scrollTop = 0;
+}
+function fillList(box) {
+  box.innerHTML = '';
+  if (!G.news.length) { box.textContent = 'No news collected yet – go grab some newspapers!'; return; }
+  for (const n of G.news) {
+    const d = document.createElement('details'), s = document.createElement('summary'), c = document.createElement('small');
+    c.textContent = n.cat; s.appendChild(c); s.appendChild(document.createTextNode(n.head));
+    const p = document.createElement('p'); p.textContent = n.story;
+    const w = document.createElement('p'); w.className = 'why2'; w.textContent = 'Why it matters: ' + n.why;
+    d.append(s, p, w); box.appendChild(d);
+  }
+}
+$('sGo').onclick = resume;
+$('listGo').onclick = resume;
+$('readBtn').onclick = () => { if (state !== 'play') return; state = 'read'; fillList($('listBox')); $('list').classList.remove('hidden'); };
+
+/* ---------- flow ---------- */
+function start() { newGame(); state = 'play'; ['start','over','story','list'].forEach(i => $(i).classList.add('hidden')); $('readBtn').classList.remove('hidden'); }
+function gameOver() {
+  state = 'over'; $('readBtn').classList.add('hidden');
+  const sc2 = Math.floor(G.score); let msg = '';
+  if (sc2 > best) { best = sc2; msg = 'New best! '; try { localStorage.setItem('dnlives-best', best); } catch (e) {} }
+  $('big').textContent = sc2 + ' pts';
+  $('summary').textContent = msg + 'You caught ' + G.news.length + ' headline' + (G.news.length === 1 ? '' : 's') +
+    '. Tap a headline to re-read the story:';
+  fillList($('collected'));
+  $('over').classList.remove('hidden');
+}
+$('playBtn').onclick = start; $('againBtn').onclick = start;
+
+function loop(ts) {
+  const dt = Math.min((ts - last) / 1000 || 0, 0.05); last = ts;
+  if (state === 'play') update(dt);
+  draw(); requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
