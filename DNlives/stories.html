@@ -54,13 +54,6 @@
   .card .body { font-size:18px; line-height:1.55; margin:0 0 12px; max-width:none; }
   .card .why { background:#0d1b2a10; border-left:4px solid var(--blue); padding:8px 12px; font-size:16px; line-height:1.4; margin-bottom:14px; }
   .card .why b { color:var(--blue); font:800 12px system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; display:block; }
-  .quiz { border-top:1px solid #0d1b2a30; padding-top:12px; }
-  .quiz .qq { font:700 16px system-ui, sans-serif; margin-bottom:8px; }
-  .opt { display:block; width:100%; text-align:left; font:600 16px system-ui, sans-serif; background:#fff; color:var(--ink);
-    border:2px solid #0d1b2a30; box-shadow:none; border-radius:10px; padding:10px 14px; margin-bottom:8px; }
-  .opt.ok { background:#c8f1d0; border-color:#2e9b49; }
-  .opt.no { background:#ffd0d0; border-color:var(--red); }
-  .opt:active { transform:none; box-shadow:none; }
   .fb { font:700 15px system-ui, sans-serif; min-height:20px; margin-bottom:6px; }
   details { border-bottom:1px solid #ffffff22; padding:6px 0; }
   summary { cursor:pointer; font-weight:700; line-height:1.35; }
@@ -86,11 +79,6 @@
     <h2 id="sHead"></h2>
     <p class="body" id="sBody"></p>
     <div class="why"><b>Why it matters</b><span id="sWhy"></span></div>
-    <div class="quiz">
-      <div class="qq" id="sQ"></div>
-      <div id="sOpts"></div>
-      <div class="fb" id="sFb"></div>
-    </div>
     <button id="sGo" style="width:100%">Keep running</button>
   </div>
 </div>
@@ -104,7 +92,7 @@
 
 <div id="start" class="screen">
   <h1>DN<em>lives</em></h1>
-  <p>The news reader run. Sprint through the subway, grab the <b>real news</b> and dodge the <b>fake news</b>. Every few papers the game pauses so you can <b>read the full story</b>, see why it matters, and answer a quick question for bonus points.</p>
+  <p>The news reader run. Sprint through the subway, grab the <b>real news</b> and dodge the <b>fake news</b>. Every few papers the game pauses so you can <b>read the full story</b> and see why it matters.</p>
   <div class="keys">The stories are fictional practice examples written for this game.</div>
   <div class="legend">
     <span>📰 <b>Collect</b> real news</span>
@@ -133,52 +121,40 @@
 const REAL = [
   {cat:"World", head:"Leaders agree on new deal to cut shipping emissions",
    story:"Representatives from 40 countries agreed on Thursday to cut greenhouse gas emissions from cargo ships by a third by 2035. Ships will have to switch to cleaner fuels and slow down in busy ports. Shipping carries about 80% of the world's goods, so the change touches almost everything people buy.",
-   why:"Shipping is a large and growing source of pollution, so rules here affect climate targets.",
-   q:"What does the deal require ships to do?", o:["Switch to cleaner fuels","Stop carrying goods","Only travel at night"]},
+   why:"Shipping is a large and growing source of pollution, so rules here affect climate targets."},
   {cat:"Science", head:"Researchers map the deepest part of the Atlantic in record detail",
    story:"A team of ocean scientists has produced the most detailed map yet of the Puerto Rico Trench, the deepest part of the Atlantic at about 8,400 metres. They used sonar carried by a robot submarine over 14 weeks. The map reveals steep cliffs and valleys nobody knew existed.",
-   why:"Knowing the sea floor helps scientists predict underwater landslides and tsunamis.",
-   q:"How did the team make the map?", o:["Sonar on a robot submarine","Satellite photos","Divers with cameras"]},
+   why:"Knowing the sea floor helps scientists predict underwater landslides and tsunamis."},
   {cat:"Tech", head:"Open-source team releases free tool for translating rare languages",
    story:"A volunteer team has released a free, open-source tool that translates 30 rare languages, many spoken by fewer than 100,000 people. Native speakers helped train it by recording everyday phrases. Anyone can download the tool and help improve it.",
-   why:"Many languages are disappearing; tools like this help communities keep them alive.",
-   q:"Who helped train the tool?", o:["Native speakers recording phrases","Only big companies","Tourists"]},
+   why:"Many languages are disappearing; tools like this help communities keep them alive."},
   {cat:"Health", head:"Study links regular walking breaks to better focus in students",
    story:"A study of 1,200 university students found that those who took a five-minute walk after every hour of studying scored higher on concentration tests. The effect was strongest in the afternoon. Students who studied for long stretches without breaks made more mistakes.",
-   why:"Small habits can improve learning without adding extra study time.",
-   q:"How long was the walking break?", o:["Five minutes","One hour","Thirty minutes"]},
+   why:"Small habits can improve learning without adding extra study time."},
   {cat:"Sport", head:"Underdog club wins the national cup in a last-minute thriller",
    story:"Second-division Riverside FC won the national cup 2–1 with a goal in the 93rd minute. The team had been given little chance against the league champions. It is the club's first major trophy in 61 years, and fans filled the city centre to celebrate.",
-   why:"The result was a big surprise, which is why upsets get so much attention.",
-   q:"When was the winning goal scored?", o:["In the 93rd minute","In the 10th minute","In a penalty shoot-out"]},
+   why:"The result was a big surprise, which is why upsets get so much attention."},
   {cat:"Local", head:"City adds 40 km of protected bike lanes downtown",
    story:"The city council voted 7–2 to build 40 km of protected bike lanes downtown by next summer. Concrete barriers will separate bikes from cars. Some shop owners worry about losing parking, so the council will review the plan after one year.",
-   why:"Local decisions change daily life: how people travel, how safe streets are, and how businesses do.",
-   q:"What worry did some shop owners raise?", o:["Losing parking","Higher taxes","Too much noise"]},
+   why:"Local decisions change daily life: how people travel, how safe streets are, and how businesses do."},
   {cat:"Climate", head:"Solar farm now powers every home in the valley",
    story:"A new solar farm with 120,000 panels has started running in Green Valley, producing enough electricity for all 18,000 homes there. Extra power is stored in large batteries so it can be used at night. Construction took 14 months.",
-   why:"Storage is the key: solar panels only help if power is still available after sunset.",
-   q:"Why does the farm use batteries?", o:["To store power for night-time","To cool the panels","To clean the panels"]},
+   why:"Storage is the key: solar panels only help if power is still available after sunset."},
   {cat:"Culture", head:"Museum returns 200 historic artifacts to their country of origin",
    story:"A national museum agreed to return 200 historic artifacts after a three-year review of how they were acquired. The items include pottery, tools and jewellery more than 2,000 years old. A joint exhibition will tour both countries.",
-   why:"Debates about who should own cultural heritage are growing around the world.",
-   q:"How many artifacts are being returned?", o:["200","20","2,000"]},
+   why:"Debates about who should own cultural heritage are growing around the world."},
   {cat:"Economy", head:"Inflation slows for third month as food prices ease",
    story:"Official figures show prices rose 2.8% over the past year, down from 3.4% the month before. Food prices eased the most, while rents kept rising. Economists say interest rates could be lowered if the trend continues.",
-   why:"Inflation means your money buys less. When it slows, household budgets feel less pressure.",
-   q:"Which prices eased the most?", o:["Food","Rent","Fuel"]},
+   why:"Inflation means your money buys less. When it slows, household budgets feel less pressure."},
   {cat:"Campus", head:"University opens 24-hour study hub after student petition",
    story:"After a petition signed by 3,000 students, the university will open a 24-hour study hub in the main library from next semester. It will have quiet rooms, free Wi-Fi and a late-night café, with security staff on duty overnight.",
-   why:"It shows how students organizing together can change campus policy.",
-   q:"What led to the new study hub?", o:["A student petition","A new law","A donation"]},
+   why:"It shows how students organizing together can change campus policy."},
   {cat:"World", head:"Rescue teams reach all trapped hikers safely after storm",
    story:"Rescue teams reached all 12 hikers trapped on Mount Alder after a storm closed the trail for two days. Helicopters lifted them out as the weather cleared, and none were seriously hurt. Officials urged hikers to check forecasts before setting out.",
-   why:"It is a reminder that planning ahead keeps people safe outdoors.",
-   q:"How were the hikers rescued?", o:["By helicopter","They walked down","By boat"]},
+   why:"It is a reminder that planning ahead keeps people safe outdoors."},
   {cat:"Health", head:"New vaccine shows strong results in late-stage trial",
    story:"A new vaccine against a common childhood infection prevented illness in 9 out of 10 children in a trial of 20,000 participants. Side effects were mild, mostly a sore arm. Regulators must now review the data before it can be offered to the public.",
-   why:"A good trial result is not the same as approval. Regulators still have to check the evidence.",
-   q:"What happens next?", o:["Regulators review the data","It goes on sale tomorrow","The trial starts over"]},
+   why:"A good trial result is not the same as approval. Regulators still have to check the evidence."},
 ];
 const FAKE = [
   ["Scientists confirm the moon will be sold to a private company", "Check the source: no agency has said this."],
@@ -423,21 +399,6 @@ function resume() { ['story','list'].forEach(i => $(i).classList.add('hidden'));
 function openStory(n) {
   state = 'read';
   $('sCat').textContent = n.cat; $('sHead').textContent = n.head; $('sBody').textContent = n.story; $('sWhy').textContent = n.why;
-  $('sQ').textContent = n.q; $('sFb').textContent = ''; $('sFb').style.color = '';
-  const box = $('sOpts'); box.innerHTML = ''; let done = false;
-  shuffle(n.o.slice()).forEach(txt => {
-    const b = document.createElement('button'); b.className = 'opt'; b.textContent = txt;
-    b.onclick = () => {
-      if (done) return; done = true;
-      const ok = txt === n.o[0];
-      b.classList.add(ok ? 'ok' : 'no');
-      if (!ok) [...box.children].forEach(c => { if (c.textContent === n.o[0]) c.classList.add('ok'); });
-      if (ok) { G.score += 100; updateHud(); }
-      $('sFb').textContent = ok ? '✓ Correct! +100' : '✗ Not quite – the answer is highlighted.';
-      $('sFb').style.color = ok ? '#2e9b49' : '#d62828';
-    };
-    box.appendChild(b);
-  });
   $('story').classList.remove('hidden'); $('story').scrollTop = 0;
 }
 function fillList(box) {
