@@ -200,13 +200,13 @@ function spawnRow(mode) {
     blocked.forEach(l => ent("suv", l, D0));
   } else if (mode === "crowd" || mode === "press") {
     blocked.forEach(l => Math.random() < .85 && ent("crowd", l, D0, {press: mode === "press"}));
-  } else if (Math.random() < 0.05 && G.t > 15) {
+  } else if (Math.random() < 0.08 && G.t > 15) {
     vanRow = true;
     blocked.sort(() => Math.random() - .5).slice(0, Math.random() < .5 ? 1 : 2).forEach(l => {
       ent("van", l, D0, {len:14});
     });
   } else {
-    const n = 1;
+    const n = G.t > 60 && Math.random() < .12 ? 2 : 1;
     blocked.sort(() => Math.random() - .5).slice(0, n).forEach(l => {
       const r = Math.random();
       ent(r < .2 ? "bike" : r < .4 ? "newsbox" : r < .55 ? "cones" : r < .8 ? "banner" : "scaffold", l, D0, {txt:pick(["GO BIG RED","ON AIR","BREAKING"])});
@@ -274,7 +274,7 @@ function update(dt) {
     $("cardBar").style.width = Math.max(0, G.card.t / CARD_T * 100) + "%";
     if (G.card.t <= 0) { hideCard(); G.newsCool = 1; }
   } else G.newsCool -= dt;
-  const sdt = dt * (G.slow > 0 ? 0.45 : 1) * (G.card ? 0.35 : 1);
+  const sdt = dt * (G.slow > 0 ? 0.45 : 1);
   G.t += dt;
   G.speed = Math.min(52, 26 + G.t * 0.45);
   const mv = G.speed * sdt;
@@ -329,7 +329,7 @@ function update(dt) {
   G.rowGap -= mv;
   if (G.rowGap <= 0) {
     spawnRow(G.ev ? G.ev.mode : "");
-    G.rowGap = G.ev && G.ev.mode === "calm" ? rnd(50, 60) : G.ev && (G.ev.mode === "suv" || G.ev.mode === "crowd") ? rnd(46, 54) : rnd(55, 68) - Math.min(5, G.t / 40);
+    G.rowGap = G.ev && G.ev.mode === "calm" ? rnd(50, 60) : G.ev && (G.ev.mode === "suv" || G.ev.mode === "crowd") ? rnd(38, 44) : rnd(42, 52) - Math.min(5, G.t / 40);
   }
 
   // campus buildings the path runs through
