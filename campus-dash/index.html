@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Campus Dash</title>
+<style>
+  :root { --red:#d00000; --ink:#141414; --paper:#f6f1e7; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; background:#1b1b1b; color:var(--paper); font-family:Georgia,"Times New Roman",serif; overflow:hidden; touch-action:none; }
+  #wrap { position:relative; height:100vh; height:100dvh; aspect-ratio:480/800; max-width:100vw; margin:0 auto; background:#000; }
+  canvas { width:100%; height:100%; display:block; }
+  .overlay { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px; background:rgba(15,15,15,.88); }
+  .overlay.hidden { display:none; }
+  .mast { font-family:"Old English Text MT","Times New Roman",serif; font-size:15px; letter-spacing:.2em; text-transform:uppercase; color:#ccc; border-top:3px double #888; border-bottom:3px double #888; padding:6px 0; width:100%; max-width:340px; }
+  h1 { font-family:Impact,"Arial Black",sans-serif; font-size:clamp(40px,11vw,60px); margin:18px 0 6px; line-height:.95; color:var(--red); text-shadow:2px 2px 0 #000; letter-spacing:.02em; }
+  h1 span { color:var(--paper); }
+  p { margin:6px 0; line-height:1.35; font-size:16px; max-width:340px; }
+  small { color:#aaa; font-size:12px; }
+  button { margin-top:18px; font:700 20px "Arial Black",Arial,sans-serif; letter-spacing:.06em; text-transform:uppercase; color:#fff; background:var(--red); border:0; padding:14px 34px; cursor:pointer; box-shadow:4px 4px 0 #000; }
+  button:active { transform:translate(2px,2px); box-shadow:2px 2px 0 #000; }
+  .keys { margin:12px 0 0; font-size:14px; color:#ddd; }
+  kbd { background:#333; border:1px solid #666; padding:1px 6px; border-radius:3px; font-family:monospace; }
+  #news { position:absolute; left:0; right:0; top:74px; display:flex; align-items:stretch; background:var(--paper); color:var(--ink); border-top:3px solid var(--red); border-bottom:3px solid var(--ink); transform:translateY(-150px); opacity:0; transition:transform .3s, opacity .3s; font-size:14px; line-height:1.25; }
+  #news.show { transform:none; opacity:1; }
+  #news b { background:var(--red); color:#fff; font:700 12px "Arial Black",Arial,sans-serif; padding:8px 8px; letter-spacing:.06em; display:flex; align-items:center; }
+  #news span { padding:7px 10px; font-weight:bold; }
+  #flash { position:absolute; left:0; right:0; top:30%; background:var(--red); color:#fff; text-align:center; padding:14px 18px; font:700 26px Impact,"Arial Black",sans-serif; letter-spacing:.05em; transform:scaleY(0); transition:transform .18s; box-shadow:0 6px 0 rgba(0,0,0,.5); pointer-events:none; }
+  #flash.show { transform:scaleY(1); }
+  #flash small { display:block; color:#ffd9d9; font:italic 16px Georgia,serif; margin-top:6px; letter-spacing:0; }
+  .front { background:var(--paper); color:var(--ink); padding:16px 18px; max-width:360px; width:100%; text-align:left; border:2px solid #000; box-shadow:5px 5px 0 var(--red); }
+  .front .mast { color:var(--ink); border-color:var(--ink); text-align:center; margin:0 auto 10px; font-size:13px; }
+  .front h2 { font:700 28px Impact,"Arial Black",sans-serif; line-height:1; margin:6px 0 8px; text-transform:uppercase; }
+  .front p { font-size:14px; max-width:none; }
+  .front ul { margin:6px 0 0; padding-left:18px; font-size:13px; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="c" width="480" height="800"></canvas>
+  <div id="news"><b>BREAKING</b><span id="newsText"></span></div>
+  <div id="flash">BREAKING NEWS<small id="flashText"></small></div>
+
+  <div id="menu" class="overlay">
+    <div class="mast">Lincoln &middot; Nebraska &middot; City Campus</div>
+    <h1>CAMPUS<br><span>DASH</span></h1>
+    <p>You're late for class and you don't know where anything is. Run the Mall, read the signs, find the right building &mdash; and dodge whatever breaking news throws at you.</p>
+    <p class="keys"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> change lane &nbsp; <kbd>&uarr;</kbd>/<kbd>Space</kbd> jump &nbsp; <kbd>&darr;</kbd> slide<br>Phone: swipe left / right / up / down</p>
+    <button id="startBtn">Start running</button>
+    <p><small id="best"></small></p>
+    <p><small>An unofficial fan game. All headlines are fictional.</small></p>
+  </div>
+
+  <div id="over" class="overlay hidden">
+    <div class="front">
+      <div class="mast">The Daily Dash &middot; Final Edition</div>
+      <h2 id="overHead">Student late for class</h2>
+      <p id="overBody"></p>
+      <ul id="overNews"></ul>
+    </div>
+    <button id="againBtn">Run again</button>
+  </div>
+</div>
+
+<script>
+(() => {
+"use strict";
+const cv = document.getElementById("c"), ctx = cv.getContext("2d");
+const W = 480, H = 800, CX = 240, HOR = 250, GY = 640, LW = 110, D0 = 110;
+const $ = id => document.getElementById(id);
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = a => a[Math.floor(Math.random() * a.length)];
+
+const DEST = ["Love Library","Nebraska Union","Memorial Stadium","Andersen Hall","Hamilton Hall","Sheldon Art","Selleck Quad","Westbrook Music","Mueller Tower","Morrill Hall"];
+const NEWS = [
+  {mode:"suv",    head:"Governor's motorcade rolling through campus", sub:"Lanes are closed. Watch for black SUVs!"},
+  {mode:"crowd",  head:"State senators hold hearing at the Union", sub:"Crowds are spilling onto the Mall."},
+  {mode:"rain",   head:"Legislature passes tuition freeze", sub:"Husker Bucks for everyone — grab them!"},
+  {mode:"press",  head:"Senator calls press conference on the Mall", sub:"Reporters swarm. Press passes are worth double!"},
+  {mode:"detour", head:"Governor cuts ribbon on new building", sub:"Paths rerouted — a fork is coming, read the signs!"},
+  {mode:"crowd",  head:"Senators and governor clash over NU budget", sub:"Protesters and aides block the paths."},
+];
+const KINDS = { bike:"low", bench:"low", cones:"low", banner:"high", scaffold:"wall", suv:"wall", crowd:"wall" };
+
+let state = "menu", best = 0;
+try { best = +localStorage.getItem("campusDashBest") || 0; } catch(e){}
+$("best").textContent = best ? "Best score: " + best : "";
+
+let G; // game state
+function reset() {
+  G = {
+    t:0, dist:0, speed:26, score:0, coins:0, lives:3, reached:0,
+    p:{ lane:0, target:0, h:0, vy:0, slide:0, inv:0, run:0 },
+    ents:[], scen:[], gate:null, gateTimer:6,
+    target:pick(DEST), rowGap:20, scenGap:0, bldGap:0,
+    ev:null, evTimer:16, slow:0, toast:null, shake:0, log:[], coinMul:1,
+  };
+  G.scen.push(...[...Array(14)].map((_, i) => ({side:i%2?1:-1, d:i*8, kind:"tree"})));
+}
+
+// ---------- input ----------
+function act(a) {
+  if (state !== "play") return;
+  const p = G.p;
+  if (a === "L") p.target = Math.max(-1, p.target - 1);
+  if (a === "R") p.target = Math.min(1, p.target + 1);
+  if (a === "U" && p.h <= 0) { p.vy = 720; p.slide = 0; }
+  if (a === "D") { if (p.h > 0) p.vy = -1000; else p.slide = 0.7; }
+}
+addEventListener("keydown", e => {
+  const m = {ArrowLeft:"L",a:"L",A:"L",ArrowRight:"R",d:"R",D:"R",ArrowUp:"U",w:"U",W:"U"," ":"U",ArrowDown:"D",s:"D",S:"D"}[e.key];
+  if (m) { e.preventDefault(); act(m); }
+  if (e.key === "Enter" && state !== "play") start();
+});
+let tx, ty;
+cv.addEventListener("touchstart", e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, {passive:true});
+cv.addEventListener("touchend", e => {
+  const t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty;
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < 25) return act("U");
+  if (Math.abs(dx) > Math.abs(dy)) act(dx < 0 ? "L" : "R"); else act(dy < 0 ? "U" : "D");
+}, {passive:true});
+$("startBtn").onclick = start; $("againBtn").onclick = start;
+
+function start() {
+  reset(); state = "play";
+  $("menu").classList.add("hidden"); $("over").classList.add("hidden");
+  $("news").classList.remove("show"); $("flash").classList.remove("show");
+  toast("Find: " + G.target, 3);
+}
+
+// ---------- spawning ----------
+function ent(kind, lane, d, extra) { G.ents.push(Object.assign({kind, lane, d, hit:false}, extra)); }
+
+function spawnRow(mode) {
+  const free = Math.floor(rnd(-1, 2)), lanes = [-1, 0, 1];
+  const blocked = lanes.filter(l => l !== free);
+  if (mode === "suv") {
+    blocked.forEach(l => ent("suv", l, D0));
+  } else if (mode === "crowd" || mode === "press") {
+    blocked.forEach(l => Math.random() < .85 && ent("crowd", l, D0, {press: mode === "press"}));
+  } else {
+    const n = G.t > 25 && Math.random() < .5 ? 2 : 1;
+    blocked.sort(() => Math.random() - .5).slice(0, n).forEach(l => {
+      const r = Math.random();
+      ent(r < .28 ? "bike" : r < .5 ? "bench" : r < .65 ? "cones" : r < .85 ? "banner" : "scaffold", l, D0);
+    });
+  }
+  const rain = mode === "rain";
+  const coinLanes = rain ? lanes : [free];
+  coinLanes.forEach(l => { for (let i = 0; i < (rain ? 5 : 4); i++) ent("coin", l, D0 + 3 + i * 3.2); });
+}
+
+function spawnGate() {
+  const ids = DEST.filter(n => n !== G.target).sort(() => Math.random() - .5);
+  const correct = Math.floor(rnd(-1, 2)), labels = {};
+  [-1, 0, 1].forEach(l => labels[l] = l === correct ? G.target : ids.pop());
+  G.gate = {d:D0, correct, labels, done:false};
+}
+
+function startNews(n) {
+  G.ev = {mode:n.mode, t:9, head:n.head};
+  G.log.push(n.head);
+  G.slow = 1.6;
+  $("newsText").textContent = n.head;
+  $("flashText").textContent = n.head + " — " + n.sub;
+  $("news").classList.add("show"); $("flash").classList.add("show");
+  setTimeout(() => $("flash").classList.remove("show"), 2600);
+  if (n.mode === "detour") G.gateTimer = Math.min(G.gateTimer, 1.5);
+  G.coinMul = (n.mode === "rain" || n.mode === "press") ? 2 : 1;
+}
+
+function toast(msg, secs, bad) { G.toast = {msg, t:secs, bad}; }
+
+// ---------- update ----------
+function update(dt) {
+  const p = G.p;
+  G.slow = Math.max(0, G.slow - dt);
+  const ts = G.slow > 0 ? 0.45 : 1;
+  const sdt = dt * ts;
+  G.t += dt;
+  G.speed = Math.min(52, 26 + G.t * 0.45);
+  const mv = G.speed * sdt;
+  G.dist += mv; G.score += mv * 0.5;
+
+  // player
+  p.lane += (p.target - p.lane) * Math.min(1, dt * 14);
+  if (p.h > 0 || p.vy > 0) { p.h += p.vy * dt; p.vy -= 1900 * dt; if (p.h <= 0) { p.h = 0; p.vy = 0; } }
+  p.slide = Math.max(0, p.slide - dt);
+  p.inv = Math.max(0, p.inv - dt);
+  p.run += dt * (6 + G.speed * 0.15);
+  G.shake = Math.max(0, G.shake - dt);
+
+  // world scroll
+  [...G.ents, ...G.scen].forEach(o => o.d -= mv);
+  if (G.gate) G.gate.d -= mv;
+
+  // scenery
+  G.scenGap -= mv; G.bldGap -= mv;
+  if (G.scenGap <= 0) { G.scenGap = 7; G.scen.push({side:Math.random()<.5?-1:1, d:D0, kind:Math.random()<.35?"lamp":"tree"}); }
+  if (G.bldGap <= 0) { G.bldGap = 15; G.scen.push({side:G.scen.length%2?1:-1, d:D0, kind:"bld", name:pick(DEST), h:rnd(150,250), w:rnd(190,260)}); }
+
+  // news events
+  if (G.ev) { G.ev.t -= dt; if (G.ev.t <= 0) { G.ev = null; G.coinMul = 1; $("news").classList.remove("show"); } }
+  else { G.evTimer -= dt; if (G.evTimer <= 0 && !G.gate) { G.evTimer = rnd(22, 30); startNews(pick(NEWS)); } }
+
+  // rows
+  const gateBusy = G.gate && !G.gate.done;
+  G.rowGap -= mv;
+  if (G.rowGap <= 0 && !gateBusy) {
+    spawnRow(G.ev ? G.ev.mode : "");
+    G.rowGap = G.ev && (G.ev.mode === "suv" || G.ev.mode === "crowd") ? rnd(13, 16) : rnd(17, 24) - Math.min(6, G.t / 15);
+  }
+
+  // gates
+  if (!G.gate) { G.gateTimer -= dt; if (G.gateTimer <= 0) spawnGate(); }
+  else if (!G.gate.done && G.gate.d <= 0) {
+    G.gate.done = true;
+    const lane = Math.round(p.lane);
+    if (lane === G.gate.correct) {
+      G.reached++; G.score += 200;
+      toast("Found " + G.target + "! +200", 2.4);
+      do { G.target = pick(DEST); } while (G.target === G.gate.labels[lane]);
+      setTimeout(() => G.p && toast("Next: " + G.target, 2.6), 1500);
+    } else {
+      toast("Wrong way! That's " + G.gate.labels[lane], 2.6, true);
+      hurt();
+    }
+    G.gateTimer = rnd(8, 11);
+  }
+  if (G.gate && G.gate.d < -8) G.gate = null;
+
+  // collisions
+  for (const o of G.ents) {
+    if (o.hit || o.d > 1.3 || o.d < -1.6) continue;
+    if (Math.abs(p.lane - o.lane) > 0.55) continue;
+    if (o.kind === "coin") {
+      if (p.h < 100) { o.hit = true; G.coins++; G.score += 10 * G.coinMul; }
+      continue;
+    }
+    const rule = KINDS[o.kind];
+    const safe = (rule === "low" && p.h > 62) || (rule === "high" && p.slide > 0);
+    o.hit = true;
+    if (!safe && p.inv <= 0) { hurt(); toast(rule === "high" ? "Slide under it!" : rule === "low" ? "Jump it!" : "Ouch!", 1.1, true); }
+  }
+  G.ents = G.ents.filter(o => o.d > -6 && !(o.kind === "coin" && o.hit));
+  G.scen = G.scen.filter(o => o.d > -12);
+
+  if (G.toast && (G.toast.t -= dt) <= 0) G.toast = null;
+}
+
+function hurt() {
+  const p = G.p;
+  G.lives--; p.inv = 1.5; G.shake = 0.35;
+  if (G.lives <= 0) gameOver();
+}
+
+function gameOver() {
+  state = "over";
+  const sc = Math.floor(G.score);
+  if (sc > best) { best = sc; try { localStorage.setItem("campusDashBest", sc); } catch(e){} }
+  $("best").textContent = "Best score: " + best;
+  $("overHead").textContent = G.reached >= 3 ? "Student finds way, makes it to class" : "Student late for class, lost on campus";
+  $("overBody").innerHTML = "Score <b>" + sc + "</b> &middot; " + G.reached + " building" + (G.reached === 1 ? "" : "s") + " found &middot; " + G.coins + " Husker Bucks" + (sc >= best && sc > 0 ? " &middot; <b>new best!</b>" : "");
+  $("overNews").innerHTML = G.log.length ? "<li><i>Also in the news:</i></li>" + G.log.map(h => "<li>" + h + "</li>").join("") : "";
+  $("news").classList.remove("show"); $("flash").classList.remove("show");
+  setTimeout(() => $("over").classList.remove("hidden"), 600);
+}
+
+// ---------- drawing ----------
+const proj = d => { const s = 1 / (1 + d * 0.07); return {s, y: HOR + (GY - HOR) * s}; };
+const lx = (lane, s) => CX + lane * LW * s;
+function at(x, y, s, fn) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); fn(); ctx.restore(); }
+const R = (x, y, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(x, y, w, h); };
+const C = (x, y, r, c) => { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); };
+
+function drawBackground() {
+  const sky = ctx.createLinearGradient(0, 0, 0, HOR);
+  sky.addColorStop(0, "#6fb3e8"); sky.addColorStop(1, "#d6ecfa");
+  ctx.fillStyle = sky; ctx.fillRect(0, 0, W, HOR);
+  // skyline: Memorial Stadium, Mueller Tower, Love Library dome-ish
+  ctx.fillStyle = "#a89a8c";
+  ctx.fillRect(20, HOR - 34, 150, 34);
+  ctx.beginPath(); ctx.moveTo(20, HOR-34); ctx.lineTo(45, HOR-48); ctx.lineTo(145, HOR-48); ctx.lineTo(170, HOR-34); ctx.fill();
+  ctx.fillRect(300, HOR - 28, 120, 28);
+  ctx.fillStyle = "#9c8f82"; ctx.fillRect(228, HOR - 92, 12, 92); ctx.fillRect(225, HOR - 100, 18, 10);
+  ctx.beginPath(); ctx.moveTo(225, HOR-100); ctx.lineTo(234, HOR-116); ctx.lineTo(243, HOR-100); ctx.fill();
+  R(0, HOR, W, H - HOR, "#4f9a3a");
+  // path
+  const far = proj(D0), near = 1.4;
+  ctx.fillStyle = "#c9b79c"; ctx.beginPath();
+  ctx.moveTo(CX - 190 * far.s, HOR); ctx.lineTo(CX + 190 * far.s, HOR);
+  ctx.lineTo(CX + 190 * near, HOR + (GY - HOR) * near); ctx.lineTo(CX - 190 * near, HOR + (GY - HOR) * near); ctx.fill();
+  // curbs
+  ctx.strokeStyle = "#8a7a64"; ctx.lineWidth = 3;
+  [-1, 1].forEach(sd => { ctx.beginPath(); ctx.moveTo(CX + sd * 190 * far.s, HOR); ctx.lineTo(CX + sd * 190 * near, HOR + (GY - HOR) * near); ctx.stroke(); });
+  // lane lines
+  ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 2;
+  [-0.5, 0.5].forEach(l => { ctx.beginPath(); ctx.moveTo(CX + l * LW * far.s, HOR); ctx.lineTo(CX + l * LW * near, HOR + (GY - HOR) * near); ctx.stroke(); });
+  // brick rows
+  ctx.strokeStyle = "rgba(120,95,70,.45)";
+  const off = G ? G.dist % 5 : 0;
+  for (let d = -off; d < D0; d += 5) {
+    if (d < -1) continue; const q = proj(d);
+    ctx.lineWidth = Math.max(1, 3 * q.s);
+    ctx.beginPath(); ctx.moveTo(CX - 190 * q.s, q.y); ctx.lineTo(CX + 190 * q.s, q.y); ctx.stroke();
+  }
+}
+
+function drawScen(o) {
+  const {s, y} = proj(o.d), x = CX + o.side * (o.kind === "bld" ? 330 : o.kind === "lamp" ? 215 : 270) * s;
+  at(x, y, s, () => {
+    if (o.kind === "tree") { R(-7, -70, 14, 70, "#6b4a2b"); C(0, -100, 42, "#2f7d2f"); C(-22, -80, 28, "#3b8f38"); C(22, -82, 28, "#2b7229"); }
+    else if (o.kind === "lamp") { R(-3, -120, 6, 120, "#333"); R(-14, -128, 28, 8, "#333"); C(0, -118, 7, "#fff6c0"); }
+    else {
+      const w = o.w, h = o.h;
+      R(-w/2, -h, w, h, "#9e3a2f"); R(-w/2, -h, w, 12, "#e8dcc4"); R(-w/2, -14, w, 14, "#d8cbb0");
+      for (let r = 0; r < Math.floor((h - 50) / 40); r++) for (let c = 0; c < Math.floor(w / 36); c++) R(-w/2 + 14 + c * 36, -h + 28 + r * 40, 18, 24, "#f2d98a");
+      ctx.fillStyle = "#fff"; ctx.font = "bold 20px Georgia"; ctx.textAlign = "center"; ctx.fillText(o.name.toUpperCase(), 0, -h + 7);
+      ctx.fillStyle = "#222"; ctx.font = "bold 13px Georgia"; ctx.fillText(o.name.toUpperCase(), 0, -h + 9);
+    }
+  });
+}
+
+function drawEnt(o) {
+  const {s, y} = proj(o.d), x = lx(o.lane, s);
+  at(x, y, s, () => {
+    switch (o.kind) {
+      case "coin": { const bob = Math.sin(G.t * 6 + o.d) * 4; C(0, -40 + bob, 15, "#f5b800"); C(0, -40 + bob, 10, "#ffd84a"); ctx.fillStyle = "#b07a00"; ctx.font = "bold 14px Arial"; ctx.textAlign = "center"; ctx.fillText("H", 0, -35 + bob); break; }
+      case "bike": ctx.strokeStyle = "#222"; ctx.lineWidth = 4; [-30, 30].forEach(a => { ctx.beginPath(); ctx.arc(a, -20, 18, 0, 7); ctx.stroke(); }); ctx.strokeStyle = "#d00000"; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(-30, -20); ctx.lineTo(-8, -48); ctx.lineTo(18, -48); ctx.lineTo(30, -20); ctx.moveTo(-8, -48); ctx.lineTo(0, -20); ctx.stroke(); R(14, -62, 6, 14, "#222"); break;
+      case "bench": R(-48, -40, 96, 10, "#7a4e2a"); R(-48, -72, 96, 8, "#7a4e2a"); R(-44, -64, 8, 24, "#555"); R(36, -64, 8, 24, "#555"); R(-44, -30, 8, 30, "#444"); R(36, -30, 8, 30, "#444"); break;
+      case "cones": [-30, 0, 30].forEach(a => { ctx.fillStyle = "#ff6a00"; ctx.beginPath(); ctx.moveTo(a - 14, 0); ctx.lineTo(a + 14, 0); ctx.lineTo(a, -48); ctx.fill(); R(a - 8, -24, 16, 6, "#fff"); }); break;
+      case "banner": R(-60, -175, 8, 175, "#555"); R(52, -175, 8, 175, "#555"); R(-58, -160, 116, 62, "#d00000"); R(-58, -160, 116, 6, "#fff"); ctx.fillStyle = "#fff"; ctx.font = "bold 20px Impact"; ctx.textAlign = "center"; ctx.fillText("GO BIG RED", 0, -120); break;
+      case "scaffold": R(-52, -180, 8, 180, "#8a8a8a"); R(44, -180, 8, 180, "#8a8a8a"); [0, 1, 2].forEach(i => R(-52, -170 + i * 60, 104, 8, "#ff8c1a")); ctx.strokeStyle = "#999"; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(-48, -10); ctx.lineTo(48, -110); ctx.moveTo(48, -10); ctx.lineTo(-48, -110); ctx.stroke(); break;
+      case "suv": { R(-52, -62, 104, 48, "#111"); R(-40, -88, 80, 30, "#1c1c1c"); R(-34, -84, 68, 20, "#6a8aa0"); C(-34, 0, 14, "#000"); C(34, 0, 14, "#000"); const f = Math.floor(G.t * 8) % 2; R(-38, -94, 20, 7, f ? "#f33" : "#33f"); R(18, -94, 20, 7, f ? "#33f" : "#f33"); R(-50, -30, 14, 8, "#ffe9a0"); R(36, -30, 14, 8, "#ffe9a0"); break; }
+      case "crowd": ["#d00000", "#2a6fdb", "#2ea043", "#f5b800", "#8a3fc4"].forEach((c, i) => { const px = -48 + i * 24, hh = 70 + (i * 13) % 20; R(px - 9, -hh, 18, hh - 20, c); R(px - 9, -22, 8, 22, "#222"); R(px + 1, -22, 8, 22, "#222"); C(px, -hh - 10, 10, "#e0b48f"); if (o.press && i % 2 === 0) { R(px + 6, -hh + 4, 14, 10, "#111"); C(px + 13, -hh + 9, 3, "#9cf"); } }); break;
+    }
+  });
+}
+
+function drawGate(g) {
+  const {s, y} = proj(g.d);
+  at(CX, y, s, () => {
+    R(-2 * LW + 4, -220, 8, 220, "#444"); R(2 * LW - 12 - 4 + 8, -220, 8, 220, "#444");
+    R(-2 * LW + 4, -230, 4 * LW - 4, 12, "#222");
+    [-1, 0, 1].forEach(l => {
+      const good = g.done && l === g.correct;
+      R(l * LW - 50, -205, 100, 62, good ? "#2ea043" : "#0b5a2e");
+      ctx.strokeStyle = "#fff"; ctx.lineWidth = 3; ctx.strokeRect(l * LW - 47, -202, 94, 56);
+      let name = g.labels[l], fs = 18; ctx.font = "bold " + fs + "px Arial"; ctx.textAlign = "center"; ctx.fillStyle = "#fff";
+      while (ctx.measureText(name).width > 86 && fs > 9) ctx.font = "bold " + (--fs) + "px Arial";
+      ctx.fillText(name, l * LW, -168);
+      ctx.fillText("▲", l * LW, -152);
+    });
+  });
+}
+
+function drawPlayer() {
+  const p = G.p, x = CX + p.lane * LW, gy = GY - p.h;
+  if (p.inv > 0 && Math.floor(p.inv * 14) % 2) return;
+  ctx.fillStyle = "rgba(0,0,0,.25)"; ctx.beginPath(); ctx.ellipse(x, GY + 4, 30 - p.h * 0.12, 9, 0, 0, 7); ctx.fill();
+  ctx.save(); ctx.translate(x, gy);
+  if (p.slide > 0) { ctx.translate(0, 0); ctx.scale(1.25, 0.55); }
+  const sw = Math.sin(p.run) * (p.h > 0 ? 0.4 : 1);
+  // legs
+  R(-14 + sw * 12, -42, 12, 42, "#2b3a67"); R(2 - sw * 12, -42, 12, 42, "#2b3a67");
+  R(-15 + sw * 12, -6, 14, 6, "#eee"); R(1 - sw * 12, -6, 14, 6, "#eee");
+  // body (from behind) + backpack
+  R(-22, -92, 44, 54, "#d00000");
+  R(-22, -92, 44, 8, "#a80000");
+  R(-17, -88, 34, 40, "#3d3d3d"); R(-13, -80, 26, 10, "#555");
+  R(-30, -90 + sw * 6, 9, 38, "#d00000"); R(21, -90 - sw * 6, 9, 38, "#d00000");
+  // head: cap
+  C(0, -108, 15, "#e0b48f"); ctx.fillStyle = "#d00000"; ctx.beginPath(); ctx.arc(0, -111, 16, Math.PI, 0); ctx.fill(); R(-16, -112, 32, 4, "#a80000");
+  ctx.fillStyle = "#fff"; ctx.font = "bold 12px Arial"; ctx.textAlign = "center"; ctx.fillText("N", 0, -116);
+  ctx.restore();
+}
+
+function drawHUD() {
+  ctx.fillStyle = "rgba(0,0,0,.55)"; ctx.fillRect(0, 0, W, 66);
+  ctx.textAlign = "left"; ctx.fillStyle = "#fff"; ctx.font = "bold 22px Impact, Arial"; ctx.fillText("SCORE " + Math.floor(G.score), 12, 26);
+  ctx.fillStyle = "#f5b800"; ctx.fillText("● " + G.coins + (G.coinMul > 1 ? "  x2" : ""), 12, 54);
+  ctx.textAlign = "right"; ctx.fillStyle = "#ff5a5a"; ctx.font = "26px Arial"; ctx.fillText("♥".repeat(Math.max(0, G.lives)) + "♡".repeat(3 - Math.max(0, G.lives)), W - 12, 28);
+  ctx.fillStyle = "#fff"; ctx.font = "bold 15px Georgia"; ctx.fillText("FIND: " + G.target.toUpperCase(), W - 12, 54);
+  if (G.toast) {
+    const a = Math.min(1, G.toast.t * 2);
+    ctx.globalAlpha = a; ctx.textAlign = "center"; ctx.font = "bold 28px Impact, Arial";
+    const w = ctx.measureText(G.toast.msg).width + 30;
+    R(CX - w / 2, 470, w, 44, G.toast.bad ? "#d00000" : "#0b5a2e");
+    ctx.fillStyle = "#fff"; ctx.fillText(G.toast.msg, CX, 502); ctx.globalAlpha = 1;
+  }
+  if (G.ev) { ctx.fillStyle = "rgba(208,0,0,.9)"; ctx.fillRect(0, H - 6, W * Math.max(0, G.ev.t / 9), 6); }
+}
+
+function render() {
+  ctx.save();
+  if (G && G.shake > 0) ctx.translate(rnd(-6, 6), rnd(-6, 6));
+  drawBackground();
+  if (G) {
+    const list = [...G.scen.map(o => ({o, t:"s"})), ...G.ents.map(o => ({o, t:"e"}))];
+    if (G.gate) list.push({o:G.gate, t:"g"});
+    list.sort((a, b) => b.o.d - a.o.d);
+    let drawn = false;
+    for (const it of list) {
+      if (!drawn && it.o.d <= 0) { drawPlayer(); drawn = true; }
+      if (it.o.d < -5) continue;
+      it.t === "s" ? drawScen(it.o) : it.t === "e" ? drawEnt(it.o) : drawGate(it.o);
+    }
+    if (!drawn) drawPlayer();
+    if (G.slow > 0) { ctx.fillStyle = "rgba(208,0,0," + Math.min(.22, G.slow * .2) + ")"; ctx.fillRect(0, 0, W, H); }
+    drawHUD();
+  }
+  ctx.restore();
+}
+
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (state === "play") update(dt);
+  render();
+  requestAnimationFrame(loop);
+}
+reset(); G.t = 0;
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
