@@ -27,6 +27,12 @@
   #news.show { transform:none; opacity:1; }
   #news b { background:var(--red); color:#fff; font:700 12px "Arial Black",Arial,sans-serif; padding:8px; letter-spacing:.06em; display:flex; align-items:center; }
   #news span { padding:7px 10px; font-weight:bold; }
+  #card { position:absolute; left:14px; right:14px; top:160px; background:var(--paper); color:var(--ink); border:2px solid #000; border-left:8px solid var(--red); box-shadow:4px 4px 0 rgba(0,0,0,.55); padding:10px 12px 14px; transform:translateY(-14px); opacity:0; pointer-events:none; transition:transform .25s, opacity .25s; overflow:hidden; }
+  #card.show { transform:none; opacity:.97; }
+  #card .tag2 { font:700 11px "Arial Black",Arial,sans-serif; letter-spacing:.12em; color:var(--red); text-transform:uppercase; }
+  #card h4 { font:700 21px Impact,"Arial Black",sans-serif; line-height:1.05; margin:4px 0 6px; text-transform:uppercase; }
+  #card p { margin:0; font-size:14px; line-height:1.35; max-width:none; }
+  #card .bar { position:absolute; left:0; bottom:0; height:5px; background:var(--red); width:100%; }
   #flash { position:absolute; left:0; right:0; top:30%; background:var(--red); color:#fff; text-align:center; padding:14px 18px; font:700 26px Impact,"Arial Black",sans-serif; letter-spacing:.05em; transform:scaleY(0); transition:transform .18s; box-shadow:0 6px 0 rgba(0,0,0,.5); pointer-events:none; }
   #flash.show { transform:scaleY(1); }
   #flash small { display:block; color:#ffd9d9; font:italic 16px Georgia,serif; margin-top:6px; letter-spacing:0; }
@@ -42,15 +48,16 @@
 <div id="wrap">
   <canvas id="c" width="480" height="800"></canvas>
   <div id="news"><b>BREAKING</b><span id="newsText"></span></div>
+  <div id="card"><div class="tag2" id="cardTag"></div><h4 id="cardHead"></h4><p id="cardBody"></p><div class="bar" id="cardBar"></div></div>
   <div id="flash">BREAKING NEWS<small id="flashText"></small></div>
 
   <div id="menu" class="overlay">
     <div class="mast">Lincoln &middot; Nebraska &middot; City Campus</div>
     <h1>CAMPUS<br><span>DASH</span></h1>
     <p class="tag">Student reporter edition</p>
-    <p>You've got the scoop of the semester &mdash; and campus security wants it spiked. Run the Mall, hop onto news vans, grab scoops, and find the building where the story is. Breaking news will crash your commute.</p>
+    <p>You've got the scoop of the semester &mdash; and campus security wants it spiked. Run the Mall, hop onto news vans and find the building where the story is. Rare news items drop from the Capitol &mdash; grab one and the game slows so you can read what the senators and governor are up to.</p>
     <div class="legend">
-      <div>&#128240; Scoops fill your story meter</div>
+      <div>&#128240; Grab a news item, then read it</div>
       <div>&#128100; 2 stumbles = you're caught</div>
       <div>&#128656; Jump onto news vans</div>
       <div>&#9889; Press pass, drone, 2x</div>
@@ -86,8 +93,8 @@ const DEST = ["Love Library","Nebraska Union","Memorial Stadium","Andersen Hall"
 const NEWS = [
   {mode:"suv",    head:"Governor's motorcade rolling through campus", sub:"Lanes are closed. Watch for black SUVs!"},
   {mode:"crowd",  head:"State senators hold hearing at the Union", sub:"Crowds are spilling onto the Mall."},
-  {mode:"rain",   head:"Legislature passes tuition freeze", sub:"Scoops everywhere — grab them!"},
-  {mode:"press",  head:"Senator calls press conference on the Mall", sub:"Reporters swarm. Scoops are worth double!"},
+  {mode:"calm",   head:"Legislature passes tuition freeze", sub:"Smooth sailing — the paths are clearer."},
+  {mode:"press",  head:"Senator calls press conference on the Mall", sub:"Reporters swarm the paths. Dodge the crowd!"},
   {mode:"detour", head:"Governor cuts ribbon on new building", sub:"Paths rerouted — a fork is coming, read the signs!"},
   {mode:"crowd",  head:"Senators and governor clash over NU budget", sub:"Aides and protesters block the paths."},
 ];
@@ -100,12 +107,28 @@ const STORIES = [
   "Reporter breaks story on parking permit price hike",
 ];
 const MISSIONS = [
-  {k:"coins",   goal:20, d:"Collect 20 scoops"},
+  {k:"coins",   goal:2,  d:"Read 2 news items"},
   {k:"reached", goal:2,  d:"Find 2 buildings"},
   {k:"events",  goal:2,  d:"Outrun 2 news events"},
   {k:"stories", goal:1,  d:"File a story"},
   {k:"vanTops", goal:3,  d:"Run across 3 news vans"},
   {k:"pus",     goal:2,  d:"Grab 2 power-ups"},
+];
+const ITEMS = [
+  {tag:"Senate",      head:"Senators advance bill to freeze in-state tuition", body:"A legislative committee voted 5-2 to hold tuition flat for two more years. Student groups packed the hearing room to watch."},
+  {tag:"Governor",    head:"Governor tours Innovation Campus", body:"The governor met student startups and promised to back more research jobs for Nebraska graduates."},
+  {tag:"Senate",      head:"Senator proposes free city bus rides for students", body:"A new bill would let students ride Lincoln buses free with a campus ID, paid for by a small state grant."},
+  {tag:"Governor",    head:"Governor signs rural nursing scholarship bill", body:"The law funds tuition for nursing students who agree to work in small Nebraska towns after graduating."},
+  {tag:"Legislature", head:"Unicameral hearing draws UNL student testifiers", body:"Dozens of students told the 49 senators how textbook costs and housing prices affect their grades."},
+  {tag:"Governor",    head:"Governor's budget keeps NU funding flat", body:"The proposed budget leaves university funding unchanged, drawing mixed reactions from regents and faculty."},
+  {tag:"Senate",      head:"Senators question Memorial Stadium parking plan", body:"Lawmakers asked why game-day lots cost more every year and whether students should get a discount."},
+  {tag:"Governor",    head:"Governor proclaims Husker Volunteer Week", body:"Campus groups will fix trails, paint benches and collect food for Lincoln pantries across the week."},
+  {tag:"Senate",      head:"Committee backs cap on textbook costs", body:"Senators voted to require professors to post required-book prices before students register for classes."},
+  {tag:"Governor",    head:"Governor calls special session on property taxes", body:"Senators will return to the Capitol next month to debate tax relief for homeowners and farmers."},
+  {tag:"Legislature", head:"Lawmakers weigh money for campus bike lanes", body:"A budget amendment would pay for protected bike lanes linking City Campus and East Campus."},
+  {tag:"Senate",      head:"Senator wants longer library hours at finals", body:"A resolution urges state universities to keep main libraries open all night during finals week."},
+  {tag:"Governor",    head:"Governor praises campus drone research", body:"After watching a demo, the governor said Nebraska could lead the nation in farm-drone technology."},
+  {tag:"Senate",      head:"Senators vote to expand mental health services", body:"Funding would add counselors at state colleges so students can be seen within a week."},
 ];
 const PU = { mag:{name:"PRESS PASS", c:"#d00000", t:9}, drone:{name:"DRONE", c:"#2a6fdb", t:6}, mult:{name:"2x SCORE", c:"#2ea043", t:12} };
 const KINDS = { bike:"low", newsbox:"low", cones:"low", banner:"high", scaffold:"wall", suv:"wall", crowd:"wall" };
@@ -126,8 +149,9 @@ function reset() {
     p:{ lane:0, target:0, y:0, vy:0, sup:0, slide:0, inv:0, run:0, fly:0, mag:0, mult:0 },
     ents:[], scen:[], gate:null, gateTimer:6,
     target:pick(DEST), rowGap:20, scenGap:0, bldGap:0,
-    ev:null, evTimer:16, slow:0, toast:null, shake:0, log:[], yarns:[], coinMul:1,
-    chase:0, chaseV:0, story:0, storyNeed:15, mission:null,
+    ev:null, evTimer:24, slow:0, toast:null, shake:0, log:[], yarns:[], coinMul:1,
+    chase:0, chaseV:0, story:0, storyNeed:3, mission:null,
+    newsCool:3, card:null, read:[], pool:[],
   };
   G.scen.push(...[...Array(14)].map((_, i) => ({side:i%2?1:-1, d:i*8, kind:"tree"})));
   newMission();
@@ -159,7 +183,7 @@ $("startBtn").onclick = start; $("againBtn").onclick = start;
 function start() {
   reset(); state = "play";
   $("menu").classList.add("hidden"); $("over").classList.add("hidden");
-  $("news").classList.remove("show"); $("flash").classList.remove("show");
+  $("news").classList.remove("show"); $("flash").classList.remove("show"); hideCard();
   toast("Story's at " + G.target + "!", 3);
 }
 
@@ -170,7 +194,7 @@ function spawnRow(mode) {
   const lanes = [-1, 0, 1], free = Math.floor(rnd(-1, 2));
   const blocked = lanes.filter(l => l !== free);
   const flying = G.p.fly > 0;
-  let coinLanes = [free], vanRow = false;
+  let vanRow = false;
   if (mode === "suv") {
     blocked.forEach(l => ent("suv", l, D0));
   } else if (mode === "crowd" || mode === "press") {
@@ -179,7 +203,6 @@ function spawnRow(mode) {
     vanRow = true;
     blocked.sort(() => Math.random() - .5).slice(0, Math.random() < .5 ? 1 : 2).forEach(l => {
       ent("van", l, D0, {len:14});
-      for (let i = 0; i < 5; i++) ent("coin", l, D0 + 2 + i * 2.4, {up:VAN_H});
     });
   } else {
     const n = G.t > 25 && Math.random() < .5 ? 2 : 1;
@@ -188,9 +211,11 @@ function spawnRow(mode) {
       ent(r < .2 ? "bike" : r < .4 ? "newsbox" : r < .55 ? "cones" : r < .8 ? "banner" : "scaffold", l, D0, {txt:pick(["GO BIG RED","ON AIR","BREAKING"])});
     });
   }
-  if (mode === "rain" && !vanRow) coinLanes = lanes;
-  coinLanes.forEach(l => { for (let i = 0; i < 4; i++) ent("coin", l, D0 + 3 + i * 3.2); });
-  if (flying) lanes.forEach(l => { for (let i = 0; i < 5; i++) ent("coin", l, D0 + 2 + i * 3, {up:150}); });
+  // one rare news item at a time, only when the reader has had time to finish the last one
+  if (G.newsCool <= 0 && !G.card && !G.ents.some(o => o.kind === "news")) {
+    const nl = vanRow ? free : free;
+    ent("news", nl, D0 + 6, {up: 0});
+  }
   if (!flying && Math.random() < 0.13) ent("pu", free, D0 + 16, {type:pick(["mag", "drone", "mult"])});
 }
 
@@ -210,18 +235,31 @@ function startNews(n) {
   $("news").classList.add("show"); $("flash").classList.add("show");
   setTimeout(() => $("flash").classList.remove("show"), 2600);
   if (n.mode === "detour") G.gateTimer = Math.min(G.gateTimer, 1.5);
-  G.coinMul = (n.mode === "rain" || n.mode === "press") ? 2 : 1;
 }
 
 function toast(msg, secs, bad) { G.toast = {msg, t:secs, bad}; }
 
-function onScoop() {
+const CARD_T = 9;
+function showCard(n) {
+  $("cardTag").textContent = n.tag + " news";
+  $("cardHead").textContent = n.head;
+  $("cardBody").textContent = n.body;
+  $("card").classList.add("show");
+  G.card = {t:CARD_T};
+}
+function hideCard() { $("card").classList.remove("show"); G.card = null; }
+
+function onNews() {
   const p = G.p;
-  G.coins++; G.score += 10 * G.coinMul * (p.mult > 0 ? 2 : 1);
+  if (!G.pool.length) G.pool = ITEMS.slice().sort(() => Math.random() - .5);
+  const n = G.pool.pop();
+  G.read.push(n);
+  G.coins++; G.score += 100 * (p.mult > 0 ? 2 : 1);
+  showCard(n);
   if (++G.story >= G.storyNeed) {
-    G.story = 0; G.storyNeed += 5; G.stories++; G.score += 500;
+    G.story = 0; G.stories++; G.score += 500;
     G.yarns.push(pick(STORIES));
-    toast("STORY FILED! +500", 2.6);
+    setTimeout(() => state === "play" && toast("STORY FILED! +500", 2.6), 1200);
   }
 }
 
@@ -237,7 +275,12 @@ function hurt(msg) {
 function update(dt) {
   const p = G.p;
   G.slow = Math.max(0, G.slow - dt);
-  const sdt = dt * (G.slow > 0 ? 0.45 : 1);
+  if (G.card) {
+    G.card.t -= dt;
+    $("cardBar").style.width = Math.max(0, G.card.t / CARD_T * 100) + "%";
+    if (G.card.t <= 0) { hideCard(); G.newsCool = 10; }
+  } else G.newsCool -= dt;
+  const sdt = dt * (G.slow > 0 ? 0.45 : 1) * (G.card ? 0.5 : 1);
   G.t += dt;
   G.speed = Math.min(52, 26 + G.t * 0.45);
   const mv = G.speed * sdt;
@@ -287,14 +330,14 @@ function update(dt) {
   if (G.ev) {
     G.ev.t -= dt;
     if (G.ev.t <= 0) { G.ev = null; G.coinMul = 1; G.events++; $("news").classList.remove("show"); }
-  } else { G.evTimer -= dt; if (G.evTimer <= 0 && !G.gate) { G.evTimer = rnd(22, 30); startNews(pick(NEWS)); } }
+  } else { G.evTimer -= dt; if (G.evTimer <= 0 && !G.gate && !G.card) { G.evTimer = rnd(34, 42); startNews(pick(NEWS)); } }
 
   // rows
   const gateBusy = G.gate && !G.gate.done;
   G.rowGap -= mv;
   if (G.rowGap <= 0 && !gateBusy) {
     spawnRow(G.ev ? G.ev.mode : "");
-    G.rowGap = G.ev && (G.ev.mode === "suv" || G.ev.mode === "crowd") ? rnd(17, 19) : rnd(19, 25) - Math.min(2, G.t / 40);
+    G.rowGap = G.ev && G.ev.mode === "calm" ? rnd(25, 30) : G.ev && (G.ev.mode === "suv" || G.ev.mode === "crowd") ? rnd(17, 19) : rnd(19, 25) - Math.min(2, G.t / 40);
   }
 
   // gates
@@ -323,15 +366,15 @@ function update(dt) {
     if (o.hit || o.kind === "van" || o.d > 1.3 || o.d < -1.6) {
       // magnet pull happens below
     }
-    if (o.kind === "coin" && p.mag > 0 && o.d < 30 && o.d > 0) {
+    if (o.kind === "news" && p.mag > 0 && o.d < 30 && o.d > 0) {
       o.lane += (p.lane - o.lane) * Math.min(1, dt * 7);
       o.up += (p.y - o.up) * Math.min(1, dt * 5);
     }
     if (o.hit || o.kind === "van" || o.d > 1.3 || o.d < -1.6) continue;
-    const near = Math.abs(p.lane - o.lane) < (o.kind === "coin" && p.mag > 0 ? 1.6 : 0.55);
+    const near = Math.abs(p.lane - o.lane) < (o.kind === "news" && p.mag > 0 ? 1.6 : 0.55);
     if (!near) continue;
-    if (o.kind === "coin") {
-      if (Math.abs(p.y - o.up) < 80 || p.mag > 0) { o.hit = true; onScoop(); }
+    if (o.kind === "news") {
+      if (Math.abs(p.y - o.up) < 110 || p.mag > 0) { o.hit = true; onNews(); }
       continue;
     }
     if (o.kind === "pu") {
@@ -351,7 +394,7 @@ function update(dt) {
       if (state !== "play") return;
     }
   }
-  G.ents = G.ents.filter(o => o.d + (o.len || 0) > -6 && !((o.kind === "coin" || o.kind === "pu") && o.hit));
+  G.ents = G.ents.filter(o => o.d + (o.len || 0) > -6 && !((o.kind === "news" || o.kind === "pu") && o.hit));
   G.scen = G.scen.filter(o => o.d > -12);
 
   // mission
@@ -369,11 +412,11 @@ function gameOver() {
   $("overHead").textContent = G.stories >= 2 ? "Reporter caught, but scoops already published"
     : G.stories === 1 ? "Student reporter caught after filing story"
     : "Student reporter caught empty-handed";
-  $("overBody").innerHTML = "Score <b>" + sc + "</b> &middot; " + G.stories + " stor" + (G.stories === 1 ? "y" : "ies") + " filed &middot; " + G.reached + " building" + (G.reached === 1 ? "" : "s") + " found &middot; " + G.coins + " scoops" + (isBest && sc > 0 ? " &middot; <b>new best!</b>" : "");
+  $("overBody").innerHTML = "Score <b>" + sc + "</b> &middot; " + G.stories + " stor" + (G.stories === 1 ? "y" : "ies") + " filed &middot; " + G.reached + " building" + (G.reached === 1 ? "" : "s") + " found &middot; " + G.coins + " news item" + (G.coins === 1 ? "" : "s") + " read" + (isBest && sc > 0 ? " &middot; <b>new best!</b>" : "");
   const list = a => "<ul>" + a.map(h => "<li>" + h + "</li>").join("") + "</ul>";
   $("overStories").innerHTML = G.yarns.length ? "<h3>Your stories</h3>" + list(G.yarns) : "";
-  $("overNews").innerHTML = G.log.length ? "<h3>Also in the news</h3>" + list(G.log) : "";
-  $("news").classList.remove("show"); $("flash").classList.remove("show");
+  $("overNews").innerHTML = (G.read.length ? "<h3>News you read</h3>" + list(G.read.map(n => "<b>" + n.head + "</b> &mdash; " + n.body)) : "") + (G.log.length ? "<h3>Breaking on your run</h3>" + list(G.log) : "");
+  $("news").classList.remove("show"); $("flash").classList.remove("show"); hideCard();
   setTimeout(() => state === "over" && $("over").classList.remove("hidden"), 600);
 }
 
@@ -450,9 +493,12 @@ function drawEnt(o) {
   const {s, y} = proj(o.d), x = lx(o.lane, s);
   at(x, y, s, () => {
     switch (o.kind) {
-      case "coin": { const bob = Math.sin(G.t * 6 + o.d) * 4, yy = -o.up - 38 + bob;
-        R(-13, yy - 14, 26, 28, "#fff"); R(-13, yy - 14, 26, 8, "#d00000"); R(-9, yy - 2, 18, 3, "#888"); R(-9, yy + 4, 18, 3, "#888"); R(-9, yy + 10, 11, 2, "#888");
-        ctx.strokeStyle = "#f5b800"; ctx.lineWidth = 2; ctx.strokeRect(-13, yy - 14, 26, 28); break; }
+      case "news": { const bob = Math.sin(G.t * 4) * 5, yy = -o.up - 62 + bob;
+        C(0, yy, 44, "rgba(255,230,120,.35)"); C(0, yy, 34, "rgba(255,230,120,.35)");
+        R(-26, yy - 30, 52, 60, "#fff"); R(-26, yy - 30, 52, 14, "#d00000");
+        ctx.fillStyle = "#fff"; ctx.font = "bold 10px Arial"; ctx.textAlign = "center"; ctx.fillText("NEWS", 0, yy - 19);
+        R(-20, yy - 8, 18, 14, "#999"); R(2, yy - 8, 18, 3, "#888"); R(2, yy - 2, 18, 3, "#888"); R(2, yy + 4, 18, 3, "#888"); R(-20, yy + 12, 40, 3, "#888"); R(-20, yy + 18, 30, 3, "#888");
+        ctx.strokeStyle = "#f5b800"; ctx.lineWidth = 3; ctx.strokeRect(-26, yy - 30, 52, 60); break; }
       case "pu": { const yy = -48 + Math.sin(G.t * 5) * 5, u = PU[o.type]; C(0, yy, 24, "rgba(255,255,255,.55)"); C(0, yy, 19, u.c);
         ctx.strokeStyle = "#fff"; ctx.fillStyle = "#fff"; ctx.lineWidth = 5; ctx.textAlign = "center";
         if (o.type === "mag") { ctx.beginPath(); ctx.arc(0, yy - 2, 9, 0, Math.PI); ctx.stroke(); R(-12, yy - 12, 6, 10, "#fff"); R(6, yy - 12, 6, 10, "#fff"); }
@@ -532,7 +578,7 @@ function drawHUD() {
   const p = G.p, m = G.mission;
   ctx.fillStyle = "rgba(0,0,0,.62)"; ctx.fillRect(0, 0, W, HUD_H);
   ctx.textAlign = "left"; ctx.fillStyle = "#fff"; ctx.font = "bold 22px Impact, Arial"; ctx.fillText("SCORE " + Math.floor(G.score), 12, 26);
-  ctx.fillStyle = "#f5e6b0"; ctx.font = "bold 14px Georgia"; ctx.fillText("SCOOPS " + G.coins + (G.coinMul > 1 ? "  x2" : ""), 12, 46);
+  ctx.fillStyle = "#f5e6b0"; ctx.font = "bold 14px Georgia"; ctx.fillText("NEWS READ " + G.coins, 12, 46);
   // story meter
   const mw = 150; R(12, 54, mw, 12, "#333"); R(12, 54, mw * G.story / G.storyNeed, 12, "#d00000");
   ctx.strokeStyle = "#fff"; ctx.lineWidth = 1; ctx.strokeRect(12.5, 54.5, mw, 12);
