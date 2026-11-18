@@ -147,11 +147,11 @@ function reset() {
   G = {
     t:0, dist:0, speed:26, score:0, coins:0, reached:0, events:0, stories:0, vanTops:0, pus:0,
     p:{ lane:0, target:0, y:0, vy:0, sup:0, slide:0, inv:0, run:0, fly:0, mag:0, mult:0 },
-    ents:[], scen:[], gate:null, gateTimer:6,
-    target:pick(DEST), rowGap:20, scenGap:0, bldGap:0,
-    ev:null, evTimer:24, slow:0, toast:null, shake:0, log:[], yarns:[], coinMul:1,
+    ents:[], scen:[], gate:null, gateTimer:5,
+    target:pick(DEST), rowGap:8, scenGap:0, bldGap:0,
+    ev:null, evTimer:18, slow:0, toast:null, shake:0, log:[], yarns:[], coinMul:1,
     chase:0, chaseV:0, story:0, storyNeed:3, mission:null,
-    newsCool:3, card:null, read:[], pool:[],
+    newsCool:0, card:null, read:[], pool:[],
   };
   G.scen.push(...[...Array(14)].map((_, i) => ({side:i%2?1:-1, d:i*8, kind:"tree"})));
   newMission();
@@ -199,13 +199,13 @@ function spawnRow(mode) {
     blocked.forEach(l => ent("suv", l, D0));
   } else if (mode === "crowd" || mode === "press") {
     blocked.forEach(l => Math.random() < .85 && ent("crowd", l, D0, {press: mode === "press"}));
-  } else if (Math.random() < 0.3 && G.t > 6) {
+  } else if (Math.random() < 0.18 && G.t > 8) {
     vanRow = true;
     blocked.sort(() => Math.random() - .5).slice(0, Math.random() < .5 ? 1 : 2).forEach(l => {
       ent("van", l, D0, {len:14});
     });
   } else {
-    const n = G.t > 25 && Math.random() < .5 ? 2 : 1;
+    const n = G.t > 50 && Math.random() < .25 ? 2 : 1;
     blocked.sort(() => Math.random() - .5).slice(0, n).forEach(l => {
       const r = Math.random();
       ent(r < .2 ? "bike" : r < .4 ? "newsbox" : r < .55 ? "cones" : r < .8 ? "banner" : "scaffold", l, D0, {txt:pick(["GO BIG RED","ON AIR","BREAKING"])});
@@ -239,7 +239,7 @@ function startNews(n) {
 
 function toast(msg, secs, bad) { G.toast = {msg, t:secs, bad}; }
 
-const CARD_T = 9;
+const CARD_T = 10;
 function showCard(n) {
   $("cardTag").textContent = n.tag + " news";
   $("cardHead").textContent = n.head;
@@ -278,7 +278,7 @@ function update(dt) {
   if (G.card) {
     G.card.t -= dt;
     $("cardBar").style.width = Math.max(0, G.card.t / CARD_T * 100) + "%";
-    if (G.card.t <= 0) { hideCard(); G.newsCool = 10; }
+    if (G.card.t <= 0) { hideCard(); G.newsCool = 5; }
   } else G.newsCool -= dt;
   const sdt = dt * (G.slow > 0 ? 0.45 : 1) * (G.card ? 0.5 : 1);
   G.t += dt;
@@ -337,7 +337,7 @@ function update(dt) {
   G.rowGap -= mv;
   if (G.rowGap <= 0 && !gateBusy) {
     spawnRow(G.ev ? G.ev.mode : "");
-    G.rowGap = G.ev && G.ev.mode === "calm" ? rnd(25, 30) : G.ev && (G.ev.mode === "suv" || G.ev.mode === "crowd") ? rnd(17, 19) : rnd(19, 25) - Math.min(2, G.t / 40);
+    G.rowGap = G.ev && G.ev.mode === "calm" ? rnd(25, 30) : G.ev && (G.ev.mode === "suv" || G.ev.mode === "crowd") ? rnd(24, 28) : rnd(28, 36) - Math.min(3, G.t / 40);
   }
 
   // gates
