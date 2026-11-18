@@ -278,7 +278,7 @@ function update(dt) {
   if (G.card) {
     G.card.t -= dt;
     $("cardBar").style.width = Math.max(0, G.card.t / CARD_T * 100) + "%";
-    if (G.card.t <= 0) { hideCard(); G.newsCool = 5; }
+    if (G.card.t <= 0) { hideCard(); G.newsCool = 1; }
   } else G.newsCool -= dt;
   const sdt = dt * (G.slow > 0 ? 0.45 : 1) * (G.card ? 0.5 : 1);
   G.t += dt;
