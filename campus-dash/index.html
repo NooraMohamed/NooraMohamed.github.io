@@ -220,7 +220,7 @@ function spawnRow(mode) {
     });
   }
   // one rare news item at a time, only when the reader has had time to finish the last one
-  if (G.newsCool <= 0 && !G.card && !G.ents.some(o => o.kind === "news")) {
+  if (G.newsCool <= 0 && (!G.card || G.card.t < 4) && !G.ents.some(o => o.kind === "news")) {
     const nl = vanRow ? free : free;
     ent("news", nl, D0 + 6, {up: 0});
   }
@@ -279,7 +279,7 @@ function update(dt) {
   if (G.card) {
     G.card.t -= dt;
     $("cardBar").style.width = Math.max(0, G.card.t / CARD_T * 100) + "%";
-    if (G.card.t <= 0) { hideCard(); G.newsCool = 1; }
+    if (G.card.t <= 0) { hideCard(); G.newsCool = 0; }
   } else G.newsCool -= dt;
   const sdt = dt * (G.slow > 0 ? 0.45 : 1);
   G.t += dt;
@@ -365,7 +365,7 @@ function update(dt) {
     const near = Math.abs(p.lane - o.lane) < (o.kind === "news" && p.mag > 0 ? 1.6 : 0.55);
     if (!near) continue;
     if (o.kind === "news") {
-      if (Math.abs(p.y - o.up) < 110 || p.mag > 0) { o.hit = true; onNews(); }
+      if ((Math.abs(p.y - o.up) < 110 || p.mag > 0) && (!G.card || G.card.t < 1.5)) { o.hit = true; onNews(); }
       continue;
     }
     if (o.kind === "pu") {
